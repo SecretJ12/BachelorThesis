@@ -1,3 +1,5 @@
+[![CI](https://github.com/SecretJ12/BachelorThesis/actions/workflows/github-actions-demo.yml/badge.svg)](https://github.com/SecretJ12/BachelorThesis/actions/workflows/github-actions-demo.yml)
+
 # LaTeX template for TUM theses
 
 This is a LaTeX template created according to the guidelines for TUM informatics theses in WS 2022. **Always check the [current formatting guidelines][thesis-guidelines] before you hand in.** See [`build/main.pdf`][sample-pdf] for an example PDF created with this template.

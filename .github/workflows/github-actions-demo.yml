@@ -12,6 +12,8 @@ jobs:
 
     - name: Build pdf
       run: make pdf
+    - name: Build dark pdf
+      run: make pdf jobname=dark
 
     - name: Upload pdf
       uses: actions/upload-artifact@v3

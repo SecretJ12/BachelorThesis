@@ -18,10 +18,12 @@
 \newcommand*{\getTitleGer}{Automatische Definition von Laufzeitfunktionen}
 \newcommand*{\getAuthor}{Jonas Stahl}
 \newcommand*{\getDoctype}{Bachelor's Thesis}
-\newcommand*{\getSupervisor}{Prof. Tobias Nipkow}
-\newcommand*{\getAdvisor}{Prof. Tobias Nipkow}
+\newcommand*{\getSupervisor}{Prof. Dr. Tobias Nipkow}
+\newcommand*{\getAdvisor}{Prof. Dr. Tobias Nipkow}
 \newcommand*{\getSubmissionDate}{16.02.2024}
 \newcommand*{\getSubmissionLocation}{Munich}
+
+\newcommand{\fref}[1]{\hyperref[#1]{\ref*{#1}. \nameref*{#1}}}
 
 \begin{document}
 
@@ -43,6 +45,11 @@
 \mainmatter{}
 
 \input{chapters/01_introduction}
+\input{chapters/02_related_work}
+\input{chapters/03_formalization}
+\input{chapters/04_implementation}
+\input{chapters/05_summary}
+
 % TODO: add more chapters here
 
 \appendix{}

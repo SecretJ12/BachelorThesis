@@ -3,5 +3,103 @@
 
 \chapter{Formalization}\label{chapter:formal}
 
+The following chapter explaines the formalization of the proof provides by Sands [TODO source] about the translation schema for a first-order language.
+The whole theory file can be found inside the GitHub repository.
 
-Formalization stuff
+He start by defining a simple imperative language we gonna translate.
+The expressions should work under arbitrary types while still providing a numeral type we can use for counting the steps.
+Therefore we define the type value which is not further specified.
+We now define the datatype using natural number as well as the not specified datatype.
+As a result we obtain a datatype satisfying our conditions.
+\begin{lstlisting}[]
+typedecl "value"
+datatype val = N nat | V "value"
+\end{lstlisting}
+
+We later also need a boolean interpretation of our datatype.
+We define false for the Natural type with 0 and everything else as true.
+\begin{lstlisting}[mathescape=true]
+definition false :: "val $\Rightarrow$ bool" where "false v $\equiv$ v = N 0"
+definition true :: "val $\Rightarrow$ bool" where "true v $\equiv$ $\neg$ false v"
+\end{lstlisting}
+
+The proof differences between primitive functions without costs and non-primitive function costing 1 per call.
+In the follownig non-primitive function will only be called functions.
+We define datatype representing an identifier for both of them.
+Additionally, functions need to differ between a function and a timing function to avoid collisions in the namspace.
+
+\begin{lstlisting}
+datatype funId =
+  Fun string
+| cFun string
+datatype pfunId = pFun string
+\end{lstlisting}
+
+With everything defined we can now provide a definitions for an expression.
+For better readability we introduce \$ for function application and \$\$ for primitive function applications.
+\begin{lstlisting}
+datatype exp =
+  App funId "exp list"        (infix "\$" 100)
+| pApp pfunId "exp list"      (infix "\$\$" 100)
+| If exp exp exp              ("(IF _/ THEN _/ ELSE _)")
+| Ident nat
+| Const val
+\end{lstlisting}
+
+All functions will be stored in a definition mapping a function id to an expression option.
+If the mapper returns None then no function is defined.
+This is needed later again for avoid namespace collisions.
+\begin{lstlisting}[mathescape=true]
+type_synonym defs = "funId $\Rightarrow$ exp option"
+\end{lstlisting}
+
+For primitive function there's no mapper but a direct primitive application function.
+It take the name of the function and a list of arguments.
+The function should be universal to support an kinds of primitive functions on different machines.
+Sands describes it to contain
+
+There is also a definition for primitive functions.
+Similar for the datatype we want to keep them as universal as possible.
+The function is only assumes to know the function sum with arbitrary many arguments as we need it to define
+the timing functions later.
+The function can be assumed to be primitive as the number of arguments is fixed in every expression.
+\begin{lstlisting}[mathescape=true]
+axiomatization pApp :: "string $\Rightarrow$ val list $\Rightarrow$ val" where
+  sum: "pApp ''sum'' es = (N o sum_list o map val_to_nat) es"
+\end{lstlisting}
+
+The last definition need for simulating a function application is an environment containing the local variables.
+Those will be represented by a list of values.
+The values can be referred through the expression Ident by giving the index of the variable.
+\begin{lstlisting}
+type_synonym env = "val list"
+\end{lstlisting}
+
+We now defined the evaluating semantic of the following form.
+\begin{equation*}
+  \rho, \phi \vdash \text{e} \rightarrow \text{v}
+\end{equation*}
+It can be read the following: The expression $\text{e}$ evaluates under the local variables $\rho$ and the definitions $\phi$ to the value v. The semantic of eval is given in \ref{lst:eval}.
+
+\begin{lstlisting}[float,label=lst:eval,caption=Default evaluation semantic,mathescape=true,escapeinside={@}{@}]
+inductive eval :: "env $\Rightarrow$ defs $\Rightarrow$ exp $\Rightarrow$ val $\Rightarrow$ bool" ("(_/, _/ $\vdash$_/ $\rightarrow$ _)")
+where
+Id:   "$\rho$, $\phi$ $\vdash$ Ident i $\rightarrow$ ($\rho$ ! i)" |
+C:    "$\rho$, $\phi$ $\vdash$ Const v $\rightarrow$ v" |
+F:    "length es = length vs $\Longrightarrow$ ($\forall$i < length vs. $\rho$, $\phi$ $\vdash$ (es ! i) $\rightarrow$ (vs ! i))
+  $\Longrightarrow$ $\phi$ f = Some fe $\Longrightarrow$ vs, $\phi$ $\vdash$ fe $\rightarrow$ v
+  $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ (f@\$@ es) $\rightarrow$ v" |
+P:    "length es = length vs $\Longrightarrow$ ($\forall$i < length es. $\rho$, $\phi$ $\vdash$ (es ! i) $\rightarrow$ (vs ! i))
+  $\Longrightarrow$ pApp p vs = v $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ (pFun p@\$\$@ es) $\rightarrow$ v" |
+If1:  "$\rho$, $\phi$ $\vdash$ b $\rightarrow$ v $\Longrightarrow$ true v
+  $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ t $\rightarrow$ et $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ (IF b THEN t ELSE f) $\rightarrow$ et" |
+If2:  "$\rho$, $\phi$ $\vdash$ b $\rightarrow$ v $\Longrightarrow$ false v
+  $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ f $\rightarrow$ ef $\Longrightarrow$ $\rho$, $\phi$ $\vdash$ (IF b THEN t ELSE f) $\rightarrow$ ef"
+\end{lstlisting}
+
+For the semantic we can show determinism given through the following formula.
+The proove is an induction over eval which can be solved mostly automatically by metis and blast.
+
+\begin{equation*}
+ \llbracket \rho, \phi \vdash e \rightarrow v; \text{ } \rho, \phi \vdash e \rightarrow v' \rrbracket \Longrightarrow v = v'
+\end{equation*}

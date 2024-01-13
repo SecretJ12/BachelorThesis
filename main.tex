@@ -27,6 +27,34 @@
 
 \usepackage{amsmath}
 \usepackage{stmaryrd}
+\usepackage{listings}
+
+\definecolor{isarblue}{HTML}{006699}
+\definecolor{isargreen}{HTML}{009966}
+\definecolor{parsedblue}{HTML}{0099CC}
+\definecolor{pink}{HTML}{f30dc5}
+\lstdefinelanguage{isabelle}{%
+    keywords=[1]{type_synonym,datatype,fun,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive},
+    keywordstyle=[1]\bfseries\color{isarblue},
+    keywords=[2]{where,assumes,shows,and},
+    keywordstyle=[2]\bfseries\color{isargreen},
+    keywords=[3]{if,then,else,case,of,SOME,let,in,O},
+    keywordstyle=[3]\color{isarblue},
+    literate=
+	  {->}{{\textcolor{parsedblue}{$\rightarrow$ }}}{2}
+	  {->s}{{\textcolor{parsedblue}{$\rightarrow$s }}}{3}
+	  {|-}{{\textcolor{parsedblue}{$\vdash$ }}}{2}
+	  {=>}{{\textcolor{parsedblue}{$\Rightarrow$ }}}{2}
+	  {==>}{$\Longrightarrow$ }{3},
+	keywords=[4]{IF,THEN,ELSE},
+	keywordstyle=[4]\color{parsedblue},
+	morestring=[b]'',
+	stringstyle=\color{pink}
+}
+
+\newcommand*{\hvdash}{\textcolor{parsedblue}{\text{}\vdash\text{}}}
+\newcommand*{\hrightarrow}{\textcolor{parsedblue}{\text{}\rightarrow\text{}}}
+\newcommand*{\hrightarrows}{\textcolor{parsedblue}{\text{}\rightarrow\!\!\text{s }}}
 
 \begin{document}
 

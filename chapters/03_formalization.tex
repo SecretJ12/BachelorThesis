@@ -3,8 +3,8 @@
 
 \chapter{Formalization}\label{chapter:formal}
 
-The following chapter explaines the formalization of the proof provides by Sands [TODO source] about the translation schema for a first-order language.
-The whole theory file can be found inside the GitHub repository.
+The following chapter explaines the formalization of the proof provides by Sands about the translation schema for a first-order language \parencite{sands}.
+The whole theory file can be found inside the GitHub repository [\#TODO link].
 
 He start by defining a simple imperative language we gonna translate.
 The expressions should work under arbitrary types while still providing a numeral type we can use for counting the steps.
@@ -36,7 +36,7 @@ datatype pfunId = pFun string
 \end{lstlisting}
 
 With everything defined we can now provide a definitions for an expression.
-For better readability we introduce \$ for function application and \$\$ for primitive function applications. The whole datatype can be found in \ref{lst:exp}.
+For better readability we introduce \$ for function application and \$\$ for primitive function applications. The whole datatype can be found in listing \ref{lst:exp}.
 
 \begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle]
 datatype exp =

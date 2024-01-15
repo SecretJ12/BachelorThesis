@@ -1,0 +1,45 @@
+
+\section{First Order Functions}
+
+At first we gonna look at First Order Function.
+Here, no function are allowed as arguments.
+Also the use of curried functions is forbidden, this means every function has to be fully evaluated in one application.
+
+The first scheme presented first was used by Sands in ``Calucli for Time Analysis of Functional Programs'' \parencite{sands}.
+His key idea was splitting up the functions into primitive (p) and non-primitive functions (f).
+Als primitive function should be free of cost, this should include basic mathematical operations and comparisons.
+When calling non-primitive function the timing function should be evaluated instead.
+In both cases also the arguments need to be transformed and added.
+Constants (c) are also seen as free and therefore translated as 0.
+In If-Else constructs it would be possible to just add up all the used terms,
+but this would lead to a big overapproximation.
+To get a better result, the relevant branch along with the condition is counted.
+The function translating this the expressions is named $\mathcal{T}$.
+
+When converting a function definition, we start with $1$ for the function call itself.
+Afterwards the expression converted by $\mathcal{T}$ is added.
+The conversion function is named $\mathcal{C}$.
+The full schema for translating expressions is shown in listing \ref{lst:basic_sands}.
+Sands also provides as proof for this schema. A formalization can be found in chapter \ref{chapter:formal}.
+
+\begin{lstlisting}[label=lst:basic_sands,caption=Translation schema for first order functions by Sands,mathescape=true]
+  $\mathcal{T}\llbracket f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$ + $\mathcal{T}\llbracket a_{1} \rrbracket$ + $\dots$ + $\mathcal{T}\llbracket a_{n}\rrbracket$)
+  $\mathcal{T}\llbracket p$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = ($\mathcal{T}\llbracket a_{1} \rrbracket$ + $\dots$ + $\mathcal{T}\llbracket a_{n}\rrbracket$)
+  $\mathcal{T}\llbracket c \rrbracket$ = $0$
+  $\mathcal{T}\llbracket$IF $c$ THEN $e_{1}$ ELSE $e_{2}\rrbracket$ = ($\mathcal{T}\llbracket c \rrbracket$ + IF $c$ THEN $\mathcal{T}\llbracket e_{1} \rrbracket$ ELSE $\mathcal{T}\llbracket e_{2} \rrbracket$)
+
+  $\mathcal{C}\llbracket f$ $a_{1}$ $\dots$ $a_{n}$ = $e\rrbracket$ = ($f$ $a_{1}$ $\dots$ $a_{n}$ = $1 + \mathcal{T}\llbracket e \rrbracket$)
+\end{lstlisting}
+
+The schema introduced by Nipkow in ``Functional Data Structures'' slightly different approach regarding primitive functions and constants \cite{fds}.
+At first every primitive function, here defined as basic mathematical operations and constructors, as well as constants are translated as 1.
+In a simplification step all $+ 1$ except one are dropped, as they don't change the asymptotic running time.
+This results in the same schema as given by Sands.
+Additionally it gives a schema to translate case and let expressions.
+Case works similar to if-else, while the body of let expressions are being converted to lambdas. (\#TODO this might change)
+The schema can be found in listing \ref{lst:fds_case_let}.
+\begin{lstlisting}[language=isabelle,label=lst:fds_case_let,caption=Translation schema for case- and let-expression by Nipkow,mathescape=true]
+  $\mathcal{T}\llbracket$case $e$ of $p_{1}$ => $e_{1}$ | $\dots$ | $p_{k}$ => $e_{k}\rrbracket$
+    = $\mathcal{T}\llbracket e\rrbracket$ + (case $e$ of $p_{1}$ => $\mathcal{T}\llbracket e_{1} \rrbracket$ | $\dots$ | $p_{k}$ => $\mathcal{T}\llbracket e_{k} \rrbracket$)
+  $\mathcal{T}\llbracket$let $x$ = $e_{1}$ in $e_{2}\rrbracket$ = $\mathcal{T}\llbracket e_{1}\rrbracket$ + ($\lambda x. \mathcal{T}\llbracket e_{2} \rrbracket$) $e_{1}$
+\end{lstlisting}

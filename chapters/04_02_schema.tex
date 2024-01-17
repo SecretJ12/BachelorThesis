@@ -1,2 +1,44 @@
 
 \section{Schema} \label{chapter:impl_schema}
+
+The conversion schema is mostly based on the schema proposed by Sands with some small extensions.
+Similar to sands we differ between primitive and non-primitive functions.
+Here those are called zero functions.
+A functions is zero if it is a constructor or marked as zero.
+Marked zero function should include basic mathematical operations as well as comparisons taking a constant amount of time.
+For a discussion about this see chapter \ref{chapter:nonconstant_zeros}.
+The function $\mathcal{F}$ is only a wrapper for the function call itself.
+Arguments will be handled in the next step.
+
+% #TODO align it
+\begin{lstlisting}[language=translation,mathescape=true,keepspaces]
+  cFb$f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = $0$               | Constructors & Zero Functions
+  cFb$f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$)  | others
+\end{lstlisting}
+
+The translation schema is equal to the schema used by Nipkow.
+For the defined cases Sands schema is also equal.
+Therefore the proof holds for this part of the schema.
+
+\begin{lstlisting}[language=translation,mathescape=true,keepspaces]
+  cTb$c \rrbracket$ = $0$
+  cTb$ f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = cFb$T\_f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ + cTb$a_{1} \rrbracket$ + $\dots$ + cTb$a_{n}\rrbracket$
+  cTbif $c$ then $et$ else $ef\rrbracket$ = cTb$c\rrbracket$ + (if $c$ then cTb$et \rrbracket$ else cTb$ef \rrbracket$)
+  cTb$$case $e$ of $c_{1}$ => $e_{1}$ | $\dots$ | $c_{n}$ => $e_{n}\rrbracket$
+    = cTb$ c\rrbracket$ + (case $e$ of $c_{1}$ => cTb$e_{1}\rrbracket$ | $\dots$ | $c_{n}$ => cTb$e_{n}\rrbracket$)
+  cTb$$let $x$ = $e_{1}$ in $e_{2}\rrbracket$ = cTb$e_{1}\rrbracket$ + (let $x$ = $e_{1}$ in cTb$e_{2}\rrbracket$)
+\end{lstlisting}
+
+TODO also explain the schema for function arguments
+
+The converter differs between recursive and non-recursive functions.
+Recursive functions will be translated with a leading $1+$, while this is left out at non-recursive functions.
+This can be justified as the function call only represents a constant at non-recursive functions.
+Therefore the asymptotic running time class is not change.
+The functions converting function definitions is named $\mathcal{C}$ in listing \ref{lst:func_conv}.
+
+% #TODO align it
+\begin{lstlisting}[language=translation,label=lst:func_conv,caption=Conversion of functions,mathescape=true,keepspaces]
+  cCb$f$ $a_{1}$ $\dots$ $a_{n}$ = $e\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$ = cTb$e \rrbracket$)      | non-recursive
+  cCb$f$ $a_{1}$ $\dots$ $a_{n}$ = $e\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$ = $1$ + cTb$e  \rrbracket$)  | recursive
+\end{lstlisting}

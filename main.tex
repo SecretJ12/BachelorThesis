@@ -33,9 +33,11 @@
 \definecolor{isarblue}{HTML}{006699}
 \definecolor{isargreen}{HTML}{009966}
 \definecolor{parsedblue}{HTML}{0099CC}
+\definecolor{proofred}{HTML}{fa144f}
 \definecolor{pink}{HTML}{f30dc5}
-\lstdefinelanguage{isabelle}{%
-    keywords=[1]{type_synonym,datatype,fun,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive},
+\definecolor{purple}{HTML}{9966ff}
+\lstdefinelanguage{isabelle}{
+    keywords=[1]{type_synonym,datatype,fun,function,termination,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive,by},
     keywordstyle=[1]\bfseries\color{isarblue},
     keywords=[2]{where,assumes,shows,and},
     keywordstyle=[2]\bfseries\color{isargreen},
@@ -47,10 +49,14 @@
 	  {|-}{{\textcolor{parsedblue}{$\vdash$ }}}{2}
 	  {=>}{{\textcolor{parsedblue}{$\Rightarrow$ }}}{2}
 	  {==>}{$\Longrightarrow$ }{3},
-	keywords=[4]{IF,THEN,ELSE},
-	keywordstyle=[4]\color{parsedblue},
-	morestring=[b]'',
-	stringstyle=\color{pink}
+    keywords=[4]{IF,THEN,ELSE},
+    keywordstyle=[4]\color{parsedblue},
+    keywords=[5]{apply,done},
+    keywordstyle=[5]\color{proofred},
+    keywords=[6]{rule,simp},
+    keywordstyle=[6]\color{purple},
+    morestring=[b]'',
+    stringstyle=\color{pink}
 }
 \lstdefinelanguage{translation}{%
     keywords=[1]{type_synonym,datatype,fun,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive},

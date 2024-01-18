@@ -17,21 +17,26 @@ The translation schema converts zero functions differently, see chapter \ref{cha
 Listing \ref{lst:primitive} shows all the functions, that are marked zero by default.
 With the command $\texttt{define\_time\_0}$ you can mark more functions as zero.
 
+To convert mutual recursive functions, you need to provide all all depending functions.
+This cannot be used to convert multiple not already mutual recursive functions at once.
+
 \begin{lstlisting}[float,label=lst:primitive,caption=Functions primitive by default,mathescape=true]
   +, -, *, /, div, <, $\le$, Not, $\land$, $\lor$, =, Num.numeral_class.numeral
 \end{lstlisting}
 
 \begin{lstlisting}[float,label=lst:cmds,caption=Schema of implemented command]
-  define_time_fun {NameOfFunction} [equations {thms list}]
-  define_time_function {NameOfFunction} [equations {thms list}]
+  define_time_fun {NameOfFunction}+ [equations {thms list}]
+  define_time_function {NameOfFunction}+ [equations {thms list}]
   define_time_0 {NameOfFunction}
 \end{lstlisting}
 
-By default timing functions will be registered with the prefix $\texttt{T\_}$.
-If you need to change this behaviour the configuration variable $\texttt{time\_prefix}$ has to be adjusted.
-Most of the time this should be not be changed to avoid confusion.
+By default timing functions will be registered with the prefix ``$\texttt{T\_}$''.
+If you need to change this behaviour the configuration variable $\texttt{time\_prefix}$ can be adjusted.
+Most of the time this should be not be changed to avoid confusion and incompatibilities.
 
-By default the functions will be registered without sequential mode. This is the default of the $\texttt{function}$ command.
-The default is chosen as it avoids the differences between the original and the timing function.
-This creates problems for the automatic termination proof in some cases.
-The fallback to sequential mode is shown in the output as warning.
+The converter will try to register the function without sequential mode first.
+This is the default of the $\texttt{function}$ command.
+The behaviour is chosen as it avoids differences between the original and the timing function,
+which would create problems for the autoamtic termination proof in some cases.
+If this fails the converter falls back to sequential modde.
+A warning is shown in the output.

@@ -1,7 +1,27 @@
 
 \section{Restrictions} \label{chapter:restrictions}
+The converter has some known restrictions.
 
+\subsection{Functions in datatypes}
+As described earlier there is a translations for functions being passed as arguments.
+Extending this for functions contained in pairs is straight forward, as function type inside a pair can be changed to the needed pair.
+The converter supports this automatically.
+For arbitrary datatypes this no longer holds.
+For example imagine a datatype with a constructor taking a function.
+We cannot change the argument to a pair of functions as it is already fixed by the datatype.
+Therefore it would be needed create a new datatype taking the mentioned type.
+This is no longer in the wanted scope of this command.
+
+\subsection{Operations on datatypes} \label{chapter:nonconstant_zeros}
+Most basic operations as the equals operator ``='' are marked as zero function.
+For simple datatype as nat we can easily argue that a comparsion can be made in constant time.
+This no longer holds for slightly more complicated types as lists.
+The exact time for a list would be linear times the time for the type of the contained items in the list.
+The command would need to register a timing version for every term the operator could be used with.
+Considering fully specified types this would be quite complex, without specified types it's not possible.
+Therefore it is the users responsibility to only use those zero operators in timing functions if the constant time can be justified.
+For lists this could be the case if one of the comparison sides is a constant as the empty list.
 
 \subsection{Partial application}
-\subsection{Functions in datatypes}
-\subsection{Operations on datatypes} \label{chapter:nonconstant_zeros}
+
+Version proposed by Sands does not work in Isabelle \#TODO

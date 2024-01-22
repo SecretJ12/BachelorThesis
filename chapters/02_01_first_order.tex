@@ -36,7 +36,8 @@ At first every primitive function, here defined as basic mathematical operations
 In a simplification step all $+ 1$ except one are dropped, as they don't change the asymptotic running time.
 This results in the same schema as given by Sands.
 Additionally it gives a schema to translate case and let expressions.
-Case works similar to if-else, while the body of let expressions are being converted to lambdas. (\#TODO this might change)
+Case and let expressions work similar to if-else constructs.
+The assigned expression in let can be left out if the variable is not used in the translated version.
 The schema can be found in listing \ref{lst:fds_case_let}.
 \begin{lstlisting}[language=translation,label=lst:fds_case_let,caption=Translation schema for case- and let-expression by Nipkow,mathescape=true]
   cTb$$case $e$ of $p_{1}$ => $e_{1}$ | $\dots$ | $p_{k}$ => $e_{k}\rrbracket$

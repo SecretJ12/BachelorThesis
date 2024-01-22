@@ -38,10 +38,10 @@ datatype pfunId = pFun string
 With everything defined we can now provide a definitions for an expression.
 For better readability we introduce \$ for function application and \$\$ for primitive function applications. The whole datatype can be found in listing \ref{lst:exp}.
 
-\begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle]
+\begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle,escapeinside={@}{@}]
 datatype exp =
-  App funId "exp list"        (infix "\$" 100)
-| pApp pfunId "exp list"      (infix "\$\$" 100)
+  App funId "exp list"        (infix "@\$@" 100)
+| pApp pfunId "exp list"      (infix "@\$\$@" 100)
 | If exp exp exp              ("(IF _/ THEN _/ ELSE _)")
 | Ident nat
 | Const val

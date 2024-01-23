@@ -44,7 +44,7 @@ The schema is written in schema \ref{fig:higher_T}.
     \mathcal{V}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= f'\ \mathcal{V}\llbracket a_{1}\rrbracket\ \dots \ \mathcal{V}\llbracket a_{n}\rrbracket\\
     \mathcal{V}\llbracket p\ a_{1}\ \dots\ a_{n}\rrbracket &= p\ \mathcal{V}\llbracket a_{1}\rrbracket\ \dots \ \mathcal{V}\llbracket a_{n}\rrbracket\\
     \mathcal{V}\llbracket c \rrbracket &= c\\
-    \mathcal{T}\llbracket \text{IF}\ c\ \text{THEN}\ e_{1}\ \text{ELSE}\ e_{2}\rrbracket &= \text{IF}\  \mathcal{V}\llbracket e_{1}\rrbracket\ \text{THEN}\ \mathcal{V}\llbracket e_{2}\rrbracket\ \text{ELSE}\ \mathcal{V}\llbracket e_{2}\rrbracket\\
+    \mathcal{V}\llbracket \text{IF}\ c\ \text{THEN}\ e_{1}\ \text{ELSE}\ e_{2}\rrbracket &= \text{IF}\  \mathcal{V}\llbracket e_{1}\rrbracket\ \text{THEN}\ \mathcal{V}\llbracket e_{2}\rrbracket\ \text{ELSE}\ \mathcal{V}\llbracket e_{2}\rrbracket\\
     \mathcal{V}\llbracket f\rrbracket &= (f',cf)\\
     \mathcal{V}\llbracket p\rrbracket &= (p,cp)\\
     \mathcal{V}\llbracket e\ a_{1}\ \dots\ a_{n}\rrbracket &= \texttt{fun}\ \mathcal{V}\llbracket e\rrbracket\ \mathcal{V}\llbracket a_{1} \rrbracket\ \dots\ \mathcal{V}\llbracket a_{n}\rrbracket

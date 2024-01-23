@@ -1,4 +1,71 @@
 
 \section{Curried Functions}
 
-Extension by Sands
+Sands also specifies a schema for curried functions.
+It works under the assumption that application is free of cost as long as the function is not fully applied.
+He extends the pair of the last chapter by a number counting the left arguments till full application.
+The argues the schema over an default apply function taking the a function and an argument to apply.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+  fun app :: "('a => 'b) => 'a => 'b" where
+    "app f a = f a"
+\end{lstlisting}
+
+In the next step he transforms this function to accept the described triple but still evaluate to the same result.
+As long as the arity is greater than one, the curried function expects more than one argument.
+Therefore, a new triple is constructed with the argument applied and the arity decreased by 1.
+Otherwise the function is evaluated with the argument.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+  fun app' where
+    "app' f x = (if arity f = 1
+        then (func f x)
+        else (func f x, cost f x, arity f - 1))"
+\end{lstlisting}
+
+Afterward he defines the function $\texttt{capp}$.
+It yields $0$ as long as the arity is greater than $0$.
+This equals the cost of a not full application, which is $0$ by the assumption above.
+If the arity is $1$ then there cost function is evaluated.
+This gives the following function definition.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+  fun capp where
+    "capp f x = (if arity f = 1 then cost f x else 0)"
+\end{lstlisting}
+
+Similar to the translation of the higher order function, he defines two conversion functions $\mathcal{V}$ and $\mathcal{T}$.
+They serve the same purpose.
+$\mathcal{V}$ converts the function to evaluate to the original result but with the triple inserted.
+To deal with function application he uses the function $\texttt{app'}$ defined above for every argument separately.
+Naturally he creates triples instead of pairs now.
+All the other definitions stay the same as described in \ref{fig:higher_V}.
+Same holds for $\mathcal{T}$.
+Only the equation for applications is exchanged and uses the $\texttt{capp}$ function now.
+As an example we can see the transformation of the map function in listing \ref{lst:curried_map_example}.
+For better readability the infix symbol $@$ stands for the function $\texttt{app'}$ while $c@$ stands for the functino $\texttt{capp}$.
+
+\begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_map_example,caption=Example translation for map function]
+fun map where
+  "map f [] = []"
+| "map f (x#xs) = f x # map f xs"
+
+fun map' where
+  "map' f [] = []"
+| "map' f (x#xs) = (Cons,T_Cons,2) @ (f @ x) @ ((map',T_map,2) @ f @ xs)"
+
+fun T_map where
+  "T_map f [] = 1"
+| "T_map f (x#xs) = 1 + f c@ x +
+    (map',T_map,2) c@ f + (map',T_map,2) @ f c@ xs +
+    (Cons,T_Cons,2) @ (f @ x) c@ ((map',T_map,2) @ f @ xs)"
+\end{lstlisting}
+
+As we can see this already blows up for small function as map.
+To overcome this issue Sands introduces some basic optimization steps.
+Cost functions onto triples can be directly evaluated to the application on the application on the cost function if the arity is greater 1 otherwise it can be dropped.
+For the normal application he applys the similar obvious steps. (\#TODO??)
+As a result we gain a timing function quite similar to our previous schema.
+The apply function is only used for the passed function now.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+function T_map where
+  "T_map f [] = 1"
+| "T_map f (x#xs) = 1 + f c@ x + T_map f xs"
+\end{lstlisting}

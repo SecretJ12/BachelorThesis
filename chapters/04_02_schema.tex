@@ -8,7 +8,7 @@ Therefore the proof described in chapter \ref{chapter:formal} holds for this par
 Just as Nipkow we treat some functions differently.
 Here those functions are called zero function and includes Constructors and some already basic mathematical operations and comparisons.
 Additionally the user is able the mark any function as zero function.
-The command and the functions marked as zero by default can be found in \ref{chapter:commands}.
+The command and the functions marked as zero by default can be found in chapter \ref{chapter:commands}.
 Only functions taking a constant amount of time should be marked as zero function.
 The user is obliged to only mark correct functions.
 A discussion about this can be found in chapter \ref{chapter:nonconstant_zeros}.
@@ -18,23 +18,33 @@ Every function argument will be replaces by a pair of the function and its timin
 To deal with those constructs we first need to define two helper functions.
 $\mathcal{N}$ will replace all occurences of a passed function $f$ by $\texttt{(fst f)}$.
 As a result we get an expression evaluating to the normal result as in the original function.
+The definition can be found in figure \ref{fig:schema_N}.
 The function $\mathcal{A}$ converts an expression to be passed as argument to a timing function.
 All defined constants of non-primitive functions will be converted into the wanted pair.
 For primitive functions the second argument will be a lambda taking the same amount of arguments and resulting into $0$.
 For passed functions we don't need to change something, as they already are pairs.
 All the other expressions will be converted by the function $\mathcal{N}$ as they should be evaluated as normal.
 As we don't support curried functions, there those expressions cannot evaluated to a function.
-\begin{lstlisting}[language=translation,mathescape=true,keepspaces,caption=Evaluate expressions as normal,escapeinside={@}{@}]
- cNb$f\rrbracket$ = (fst $f$)             | passed function
- cNb$e_{1}$ @\$@ $e_{2}\rrbracket$ = cNb$e_{1}\rrbracket$ @\$@ cNb$e_{2}\rrbracket$  | other expressions
-\end{lstlisting}
+The definition for $\mathcal{A}$ is described in figure \ref{fig:schema_A}.
+\begin{figure}
+\begin{align*}
+  \mathcal{N}\llbracket f\rrbracket &= (\texttt{fun}\ f) &&\text{| passed function}\\
+  \mathcal{N}\llbracket e_{1}\ \$\ e_{n}\rrbracket &= \mathcal{N}\llbracket e_{1}\rrbracket\ \$\ \mathcal{N}\llbracket e_{2}\rrbracket &&\text{| other expressions}
+\end{align*}
+\caption{Handling function application for normal evaluation}
+\label{fig:schema_N}
+\end{figure}
 
-\begin{lstlisting}[language=translation,mathescape=true,keepspaces,caption=Preparing arguments for timing functions,escapeinside={@}{@}]
-  cAb$f\rrbracket$ = ($f$, $T\_f$)            | identifier @of@ defined non-primitive function
-  cAb$f\rrbracket$ = ($f$, ($\lambda x \dots z. 0$))      | identifier @of@ defined primitive functions
-  cAb$f\rrbracket$ = $f$                   | passsed function
-  cAb$e\rrbracket$ = cNb$e \rrbracket$                | other expressions
-\end{lstlisting}
+\begin{figure}
+  \begin{align*}
+    \mathcal{A}\llbracket f\rrbracket &= (f,\ T¸\_f) &&\text{| identifier for a defined non-primitive function}\\
+    \mathcal{A}\llbracket f\rrbracket &= (f, (\lambda x\ \dots\ z.\ 0)) &&\text{| identifier for a defined primitive function}\\
+    \mathcal{A}\llbracket f\rrbracket &= f &&\text{| passed function}\\
+    \mathcal{A}\llbracket e\rrbracket &= \mathcal{N}\llbracket e\rrbracket &&\text{| other expressions}
+  \end{align*}
+  \caption{Preparing arguments for timing functions}
+  \label{fig:schema_A}
+\end{figure}
 
 We now define the function $\mathcal{F}$ which converts a given function application into the application of the timing function.
 All zero function will be translated to $0$ as their evaluating should not cost anything.
@@ -42,35 +52,46 @@ All defined function get translated to the application of their timing function.
 All functions given as arguments we also want to translate it to an application of the timing function.
 As those arguments are now represented as a pair, we need to use the second element of the pair to receive the timing function.
 The cost of the arguments for functions will be handled in the next step.
-% #TODO align it
-\begin{lstlisting}[language=translation,mathescape=true,keepspaces,caption=Handling function applications]
-  cFb$f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = $0$                          | Zero Functions
-  cFb$f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = ($T\_f$ cAb$a_{1}\rrbracket$ $\dots$ cAb$a_{n}\rrbracket$)      | Defined functions
-  cFb$f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = ((snd $f$) cAb$a_{1}\rrbracket$ $\dots$ cAb$a_{n}\rrbracket$)  | Passed function
-\end{lstlisting}
+The schema is defined in figure \ref{fig:schema_F}.
+\begin{figure}
+\begin{align*}
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= 0 &&\text{| Zero function}\\
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= (T\_f\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Defined function}\\
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= ((snd\ f)\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Passed function}
+\end{align*}
+\caption{Handling function applications}
+\label{fig:schema_F}
+\end{figure}
 
-$\mathcal{T}$ is the main conversion function.
+$\mathcal{T}$ is the main conversion function, defined in figure \ref{fig:schema_T}.
 It converts expressions just as defined by Nipkow.
 The only exception are expression which are needed to be evaluated normally.
 To deal with passed functions they need to be applied to $\mathcal{N}$.
 This happens in the cases of if-else, case and let.
-\begin{lstlisting}[language=translation,mathescape=true,keepspaces]
-  cTb$c \rrbracket$ = $0$
-  cTb$ f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ = cFb$T\_f$ $a_{1}$ $\dots$ $a_{n}\rrbracket$ + cTb$a_{1} \rrbracket$ + $\dots$ + cTb$a_{n}\rrbracket$
-  cTbif $c$ then $et$ else $ef\rrbracket$ = cTb$c\rrbracket$ + (if cNb$c\rrbracket$ then cTb$et \rrbracket$ else cTb$ef \rrbracket$)
-  cTbcase $e$ of $c_{1}$ => $e_{1}$ | $\dots$ | $c_{n}$ => $e_{n}\rrbracket$
-    = cTb$ c\rrbracket$ + (case cNb$e\rrbracket$ of $c_{1}$ => cTb$e_{1}\rrbracket$ | $\dots$ | $c_{n}$ => cTb$e_{n}\rrbracket$)
-  cTblet $x$ = $e_{1}$ in $e_{2}\rrbracket$ = cTb$e_{1}\rrbracket$ + (let $x$ = cNb$e_{1}\rrbracket$ in cTb$e_{2}\rrbracket$)
-\end{lstlisting}
+\begin{figure}
+\begin{align*}
+  \mathcal{T}\llbracket c\rrbracket &= 0\\
+  \mathcal{T}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= \mathcal{F}\llbracket T\_f\ a_{1}\ \dots\ a_{n}\rrbracket + \mathcal{T}\llbracket a_{1}\rrbracket + \dots + \mathcal{T}\llbracket a_{n}\rrbracket\\
+  \mathcal{T}\llbracket \text{if}\ c\ \text{then}\ et\ \text{else}\ ef\rrbracket &= \mathcal{T}\llbracket c\rrbracket + (\text{if}\ \mathcal{N}\llbracket c\rrbracket\ \text{then}\ \mathcal{T}\llbracket et\rrbracket\ \text{else}\ \mathcal{T}\llbracket ef\rrbracket)\\
+  \mathcal{T}\llbracket \text{case}\ e\ \text{of}\ c_{1} \Rightarrow e_{1}\ |\ \dots\ |\ c_{n}\Rightarrow e_{n}\rrbracket &= \mathcal{T}\llbracket c\rrbracket + \\&\ \ \ \ \ (\text{case}\ \mathcal{N}\llbracket e\rrbracket\ \text{of}\ c_{1}\Rightarrow\mathcal{T}\llbracket e_{1}\rrbracket\ |\ \dots\ |\ c_{n} \Rightarrow \mathcal{T}\llbracket e_{n}\rrbracket)\\
+  \mathcal{T}\llbracket \text{let}\ x = e_{1}\ \text{in}\ e_{2}\rrbracket &= \mathcal{T}\llbracket e_{1}\rrbracket + (\text{let}\ x = \mathcal{N}\llbracket e_{1}\rrbracket\ \text{in}\ \mathcal{T}\llbracket e_{2}\rrbracket)
+\end{align*}
+  \caption{Main conversion schema for expressions}
+  \label{fig:schema_T}
+\end{figure}
 
 Finally we can define the function $\mathcal{C}$ transforming function definitions.
 The converter differs between recursive and non-recursive functions.
 Recursive functions will be translated with a leading $1+$, while this is left out at non-recursive functions.
 This can be justified as the function call only represents a constant at non-recursive functions.
 Therefore the asymptotic running time class does not change.
+The schema is defined in figure \ref{fig:schema_C}.
 
-% #TODO align it
-\begin{lstlisting}[language=translation,caption=Conversion of functions definitions,mathescape=true,keepspaces]
-  cCb$f$ $a_{1}$ $\dots$ $a_{n}$ = $e\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$ = cTb$e \rrbracket$)      | non-recursive
-  cCb$f$ $a_{1}$ $\dots$ $a_{n}$ = $e\rrbracket$ = ($T\_f$ $a_{1}$ $\dots$ $a_{n}$ = $1$ + cTb$e  \rrbracket$)  | recursive
-\end{lstlisting}
+\begin{figure}
+  \begin{align*}
+    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = \mathcal{T}\llbracket e\rrbracket) &&\text{| non-recursive}\\
+    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = 1 + \mathcal{T}\llbracket e\rrbracket) &&\text{| recursive}
+  \end{align*}
+  \caption{Conversion of function definitions}
+  \label{fig:schema_C}
+\end{figure}

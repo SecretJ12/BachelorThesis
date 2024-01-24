@@ -28,7 +28,7 @@ He uses them to convert every function $\texttt{f}$ into function $\texttt{f'}$ 
   f'\ x_{1}\ \dots\ x_{n} &= \mathcal{V}\llbracket e \rrbracket \\
   cf\ x_{1}\ \dots\ x_{n} &= 1 + \mathcal{N}o\mathcal{V}\llbracket e \rrbracket
   \end{align*}
-  \caption{Converting higher order functions}
+  \caption{Translation schema for higher order function definitions}
 \end{figure}
 
 The function $\mathcal{V}$ replaces every function identifier by the described pair.
@@ -49,7 +49,7 @@ The schema is written in schema \ref{fig:higher_T}.
     \mathcal{V}\llbracket p\rrbracket &= (p,cp)\\
     \mathcal{V}\llbracket e\ a_{1}\ \dots\ a_{n}\rrbracket &= \texttt{fun}\ \mathcal{V}\llbracket e\rrbracket\ \mathcal{V}\llbracket a_{1} \rrbracket\ \dots\ \mathcal{V}\llbracket a_{n}\rrbracket
   \end{align*}
-  \caption{Translation V}
+  \caption{Translation schema V for higher order functions}
   \label{fig:higher_V}
 \end{figure}
 \begin{figure}
@@ -62,6 +62,6 @@ The schema is written in schema \ref{fig:higher_T}.
     \mathcal{T}\llbracket (f',cf)\rrbracket &= 0\\
     \mathcal{T}\llbracket (p,cp)\rrbracket &= 0
   \end{align*}
-  \caption{Translation T}
+  \caption{Translation T for higher order functions}
   \label{fig:higher_T}
 \end{figure}

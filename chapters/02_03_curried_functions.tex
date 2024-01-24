@@ -1,11 +1,11 @@
 
-\section{Curried Functions}
+\section{Curried Functions} \label{chapter:rel_curried}
 
 Sands also specifies a schema for curried functions.
 It works under the assumption that application is free of cost as long as the function is not fully applied.
 He extends the pair of the last chapter by a number counting the left arguments till full application.
 The argues the schema over an default apply function taking the a function and an argument to apply.
-\begin{lstlisting}[language=isabelle,mathescape=true]
+\begin{lstlisting}[language=isabelle,mathescape=true,caption=Example apply function]
   fun app :: "('a => 'b) => 'a => 'b" where
     "app f a = f a"
 \end{lstlisting}
@@ -14,7 +14,7 @@ In the next step he transforms this function to accept the described triple but 
 As long as the arity is greater than one, the curried function expects more than one argument.
 Therefore, a new triple is constructed with the argument applied and the arity decreased by 1.
 Otherwise the function is evaluated with the argument.
-\begin{lstlisting}[language=isabelle,mathescape=true]
+\begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_app',caption=Apply function on function argument triple]
   fun app' where
     "app' f x = (if arity f = 1
         then (func f x)
@@ -26,7 +26,7 @@ It yields $0$ as long as the arity is greater than $0$.
 This equals the cost of a not full application, which is $0$ by the assumption above.
 If the arity is $1$ then there cost function is evaluated.
 This gives the following function definition.
-\begin{lstlisting}[language=isabelle,mathescape=true]
+\begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_capp,caption=Timing function of apply function]
   fun capp where
     "capp f x = (if arity f = 1 then cost f x else 0)"
 \end{lstlisting}

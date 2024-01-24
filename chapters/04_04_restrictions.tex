@@ -24,4 +24,13 @@ For lists this could be the case if one of the comparison sides is a constant as
 
 \subsection{Partial application}
 
-Version proposed by Sands does not work in Isabelle \#TODO
+As described in chapter \ref{chapter:rel_curried} Sands also proposes a translation schema for curried functions.
+This schema cannot be used as Isabelle uses a strict type system.
+Trying to define the basic function $\texttt{app'}$ as defined in listing \ref{lst:curried_app'} in Isabelle will fail.
+In the then branch the outcome of the func part is returned, while the else branch returns a triple.
+The function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
+But as the arity counter is not coupled to the timing function itself, the timing function always needs to be of the form $\texttt{'a $\Rightarrow$ nat}$.
+This is not a wanted behaviour, as we also want to evaluate the cost of a not fully evaluated function.
+
+To overcome this issue we would need to couple the counter to the number of arguments more closely.
+As this would involve a more complex datatype this is not in scope of the conversion command.

@@ -3,4 +3,24 @@
 
 \chapter{Summary}\label{chapter:summary}
 
-Summarying everything
+This work tries to automate the conversion of functions to their running time function in Isabelle.
+Therefore we look at existing conversion schemas.
+Naturally we start by restricting the function in the beginning and look at Non-Curried First Order Functions.
+The conversion schema for this functions are quite common and similar in differnet papers.
+For Higher Order Functions only Sands explains an extension for the existing schema.
+He extends the given function to a tuple containing the function and the timing function.
+In order to also deal with curried functions he extends this pair by a counter for the number of arguments left.
+In the end we gain a schema able to deal with Higher Order Curried functions.
+Sands provides prooves for all this schemas.
+Here we only take a look at the correctness proof of the schema for First Order Functions.
+The work provides a formalization of it in Isabelle and explains it.
+
+In the main part an automatic converter for functions into their running time function in Isabelle is provided.
+As the schema for Curried Function gets too complicated we restrict ourself to Non-Curried Higher Order Functions.
+Additionally we don't allow functions to be passed in datatypes as conversion of it is no quite obvious and get laborious.
+The used schema is based on the proposals by Sands \parencite{sands} and Nipkow \parencite{fds}.
+As a result we gain a simple command able convert the restricted functions automatically.
+It contains an automation for the termination proof based based on the $\texttt{lexicographic\_order}$ tactic first.
+If this fails a more advanced schema is used to proof termination based on the termination of the original function.
+This proof should covers most functions.
+The command was added to the Isabelle source files and will be accessible in the next major verison.

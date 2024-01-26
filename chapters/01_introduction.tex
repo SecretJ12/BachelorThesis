@@ -1,4 +1,15 @@
-% !TeX root = ../main.tex
-% Add the above to each chapter to make compiling the PDF easier in some editors.
-
 \chapter{Introduction}\label{chapter:introduction}
+
+To examine new datastructures and algorithms running time is one of the most important measures.
+In order to determine the running time of a function we first need to convert them.
+Afterwards the we can use proof assistants as Isabelle to proof a certain running time.
+Currently this first conversion step is done manually in Isabelle.
+As all human tasks this can create errors and make the following proof worthless.
+Goal of this work is to create a automatic converter from functions into their running time function for Isabelle.
+The converted function will represent the number of function calls inside of a function evaluation.
+To simplify the resulting function and therefore also proofs we only consider the running time class as relevant.
+This means we will apply some improvements and drop constants.
+
+Starting with chapter \ref{chapter:relwork} we take a look at the default conversion schema used in other literature. We start with a schema for more restricted functions and relax the restrictions till with see a schema for curried higher-order functions.
+To proof the correctness of the used schema we gonna look at a proof for the conversion schema in chapter \ref{chapter:formal}. The proof was formalized in Isabelle.
+In chapter \ref{chapter:impl} we take a look at the actual implementation. The chapter gives an overview on how to use the command and explains the used termination proof. In the end it also gives an overview on the current restrictions the converter cannot be used for.

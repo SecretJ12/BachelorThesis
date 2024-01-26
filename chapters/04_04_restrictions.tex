@@ -22,6 +22,8 @@ Considering fully specified types this would be quite complex, without specified
 Therefore it is the users responsibility to only use those zero operators in timing functions if the constant time can be justified.
 For lists this could be the case if one of the comparison sides is a constant as the empty list.
 
+\#TODO show example for length of list to show how to deal with restrcition
+
 \subsection{Partial application}
 As described in chapter \ref{chapter:rel_curried} Sands also proposes a translation schema for curried functions.
 This schema cannot be used as Isabelle uses a strict type system.
@@ -33,3 +35,5 @@ This is not a wanted behaviour, as we also want to evaluate the cost of a not fu
 
 To overcome this issue we would need to couple the counter to the number of arguments more closely.
 As this would involve a more complex datatype this is not in scope of the conversion command.
+
+\#TODO maybe example for not working function?

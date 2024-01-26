@@ -24,3 +24,9 @@ It contains an automation for the termination proof based based on the $\texttt{
 If this fails a more advanced schema is used to proof termination based on the termination of the original function.
 This proof should covers most functions.
 The command was added to the Isabelle source files and will be accessible in the next major verison.
+
+The schema for curried function proposed by Sands cannot be used in Isabelle.
+Therefore it is needed to think about an adaption of this schema to overcome the current limitation on non-curried functions.
+Additionally there is a restrictions for functions as equality defined for and by every datatype.
+Here we would need to provide a running time version specific for every datatype not just function.
+As conversion is not hard once the wanted equations have been found, extending this is a rather technical task.

@@ -1,39 +1,48 @@
 
 \section{Restrictions} \label{chapter:restrictions}
-The converter has some known restrictions.
+Converting functions to their timing function starts simple if restricting it to simple functions.
+But as always supporting more and more functions makes the code of the converter getting bigger and harder to read.
+In order to still keep the code maintainable some restrictions were set.
+The following section is going to explain and justify the current restrictions.
 
 \subsection{Functions in datatypes}
 As described earlier there is a translations for functions being passed as arguments.
-Extending this for functions contained in pairs is straight forward, as function type inside a pair can be changed to the needed pair.
+Extending this for functions contained in pairs is straight forward, as the datatype inside of pairs are not fixed.
 The converter supports this automatically.
 For arbitrary datatypes this no longer holds.
 For example imagine a datatype with a constructor taking a function.
 We cannot change the argument to a pair of functions as it is already fixed by the datatype.
 Therefore it would be needed create a new datatype taking the mentioned type.
-This is no longer in the wanted scope of this command.
+As creating new datatypes is not in the wanted scope of this converter, it is not supported.
 
 \subsection{Operations on datatypes} \label{chapter:nonconstant_zeros}
 Most basic operations as the equals operator ``='' are marked as zero function.
 For simple datatype as nat we can easily argue that a comparsion can be made in constant time.
 This no longer holds for slightly more complicated types as lists.
-The exact time for a list would be linear times the time for the type of the contained items in the list.
-The command would need to register a timing version for every term the operator could be used with.
-Considering fully specified types this would be quite complex, without specified types it's not possible.
+The exact time for the comparision of two lists would at least be linear through the length of the list.
+The command would need to register a timing version for every datatype the operator could be used with.
+In order to support all datatype this had to happen in the $\texttt{datatype}$ command itself.
 Therefore it is the users responsibility to only use those zero operators in timing functions if the constant time can be justified.
-For lists this could be the case if one of the comparison sides is a constant as the empty list.
+For the equality operator this would be the case if one of the sides is a constant as the empty list.
 
-\#TODO show example for length of list to show how to deal with restrcition
+Also the $\texttt{length}$ function for lists is part of this problem.
+The function itself is an abbreviation to the size operator which is automatically created for each datatype.
+Converting it directly will create problems.
+Instead we can use size equations created for the list datatype.
+Specifying them in the command will give us the wanted result.
+Listing \ref{lst:restr_length} shows the full command.
+\begin{lstlisting}[language=isabelle,float,label=lst:restr_length,caption=Converting the length function correctly]
+  define_time_fun length equations list.size(3) list.size(4)
+\end{lstlisting}
 
 \subsection{Partial application}
 As described in chapter \ref{chapter:rel_curried} Sands also proposes a translation schema for curried functions.
-This schema cannot be used as Isabelle uses a strict type system.
-Trying to define the basic function $\texttt{app'}$ as defined in listing \ref{lst:curried_app'} in Isabelle will fail.
-In the then branch the outcome of the func part is returned, while the else branch returns a triple.
-The function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
+This schema cannot be used here as Isabelle uses a strict type system.
+Trying to define Sands' $\texttt{app'}$ function as defined in listing \ref{lst:curried_app'} will fail in Isabelle.
+This is the case, because inside the then branch the outcome of the func part is returned, while the else branch returns a triple.
+However the function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
 But as the arity counter is not coupled to the timing function itself, the timing function always needs to be of the form $\texttt{'a $\Rightarrow$ nat}$.
-This is not a wanted behaviour, as we also want to evaluate the cost of a not fully evaluated function.
+This is not a wanted behaviour, as we also want to evaluate the cost of a function with more than one argument left.
 
 To overcome this issue we would need to couple the counter to the number of arguments more closely.
-As this would involve a more complex datatype this is not in scope of the conversion command.
-
-\#TODO maybe example for not working function?
+As this would involve a more complex datatype this is not in scope of the converter.

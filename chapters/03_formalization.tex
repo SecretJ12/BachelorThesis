@@ -34,7 +34,7 @@ Just as explained in the last chapter we differ between primitive and non-primit
 The call of a primitive function is free while calling a non-primitive function costs 1.
 In the following non-primitive functions will only be referred to as functions.
 For each of them we now define a datatype prepresenting an identifier.
-For functions we also need to differe between an identfier for a function and its respective cost function.
+For functions we also need to differ between an identfier for a function and its respective cost function.
 This avoids collisions in the namespace for the final correctness proof.
 \begin{lstlisting}[language=isabelle]
 datatype funId =
@@ -44,7 +44,7 @@ datatype pfunId = pFun string
 \end{lstlisting}
 
 We can now define expressions.
-An applications takes a list of arguments each represented by another expression.
+An application takes a list of arguments each represented by another expression.
 For better readability we introduce \$ for function applications and \$\$ for primitive function applications.
 The whole datatype can be found in listing \ref{lst:exp}.
 \begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle,escapeinside={@}{@}]
@@ -58,7 +58,7 @@ datatype exp =
 
 The datatype storing all registered functions is called $\texttt{defs}$.
 It is a simple function mapping a function id to an expression wrapped by an option.
-The option is again deal with possible name space collisions later.
+The option is again to deal with possible name space collisions later.
 \begin{lstlisting}[mathescape=true,language=isabelle]
 type_synonym defs = "funId => exp option"
 \end{lstlisting}
@@ -75,7 +75,7 @@ axiomatization pApp :: "string => val list => val" where
   sum: "pApp ''sum'' es = (N o sum_list o map val_to_nat) es"
 \end{lstlisting}
 
-Inside of a function the passed arguments will be available as local variables.
+Inside a function the passed arguments will be available as local variables.
 Those local variables are contained in the environment represented by a list of values.
 Inside an expression we can refer to a value through $\texttt{Ident}$.
 The selected number represents the index of the environment list.
@@ -106,12 +106,12 @@ If2:  "$\rho$, $\phi$ |- b -> v ==> false v
   ==> $\rho$, $\phi$ |- f -> ef ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> ef"
 \end{lstlisting}
 
-For the eval semantic we can show determinism described by the following formula.
-The proove is an induction over eval which can be solved mostly automatically by metis and blast.
+For the eval semantic we can show determinism stated by
 \begin{equation*}
- \llbracket \rho, \phi \hvdash e \hrightarrow v; \text{ } \rho, \phi \hvdash e \hrightarrow v' \rrbracket \Longrightarrow v = v'
+ \llbracket \rho, \phi \hvdash e \hrightarrow v; \text{ } \rho, \phi \hvdash e \hrightarrow v' \rrbracket \Longrightarrow v = v'.
 \end{equation*}
 
+The prove is an induction over eval which can be solved mostly automatically by metis and blast.
 In the next step we define a step-counting semantic of the form
 \begin{equation*}
   \rho, \phi \hvdash e \hrightarrows (v,t)
@@ -144,7 +144,7 @@ All cases can be handled by auto.
   by (induction $\rho$ $\phi$ b "(v,t)" arbitrary: v t rule: eval_count.induct) auto
 \end{lstlisting}
 
-For the other direction we need a lengthy auxiliary to deal with the arguments of function applications.
+For the other direction we need a lengthy auxiliary lemmo to deal with the arguments of function applications.
 It states the following:
 \begin{lstlisting}[language=isabelle,escapeinside={@}{@},mathescape=true]
 lemma eval_eval_count':
@@ -184,7 +184,7 @@ fun $\mathcal{T}$ :: "exp => exp" where
 
 Now we add a definition to convert a function expression.
 It uses the $\mathcal{T}$ function and adds $1+$ to front representing the function call.
-Based on this function, we also define the function conv.
+Based on this function, we also define the function $\texttt{conv}$.
 It alters a definition and registers the cost function for each defined function.
 Already defined cost functions will be dropped.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
@@ -206,7 +206,7 @@ definition no_time where
 
 In order to better deal with this property we define another auxiliary lemma.
 It states that if there is no timing function then the evaluation result does not change when the expression is converted using $\texttt{conv}$.
-The lemma is prooved over induction with a helping lemma claming conv does not change defined functions.
+The lemma is proved over induction with a helping lemma claming conv does not change defined functions.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 lemma no_time_trans:
   "no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e"
@@ -226,7 +226,7 @@ theorem conv_cor:
    shows  "$\rho$, (conv $\phi$) |-($\mathcal{T}$ e) ->N t"
 \end{lstlisting}
 
-the theorem is prooved by induction over the step-counting semantic.
+The theorem is proved by induction over the step-counting semantic.
 While the simplest cases Id and C can be solved automatically, we need an Isar proof for the other cases.
 In the following we take a look at the most important case F used for applying a function.
 We have the following assumptions:
@@ -259,7 +259,7 @@ The needed premises can be derived from \ref{cor:Tfeeval} and the axiom for prim
 In the next step we show, that calling the cost function results in the same as evaluating its expression.
 For this we need the evaluation of the arguments $\texttt{es}$.
 The evaluated result $\texttt{vs}$ is already given for the step-counting evaluation in \ref{cor:args}.
-Here we can use the lemma eval\_count\_eval stating that the result is the same for the normal semantic.
+Here we can use the lemma $\texttt{eval\_count\_eval}$ stating that the result is the same for the normal semantic.
 \begin{equation*}
 \forall \text{ i<length vs. } \rho \text{, } \phi \hvdash \text{es ! i } \hrightarrow \text{ vs ! i}
 \end{equation*}

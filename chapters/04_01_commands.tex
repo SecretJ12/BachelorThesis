@@ -11,7 +11,7 @@ Details on this proof can be found in section \ref{chapter:termination}.
 Although the termination proof should work automatically for most functions there are still edge cases, where it takes up too much time or even fails.
 Therefore the command $\texttt{define\_time\_function}$ exists.
 Similar to the command $\texttt{function}$ it only registeres the running time function.
-Afterwards the user needs to proove termination manually using the command $\texttt{termination}$.
+Afterwards the user needs to prove termination manually using the command $\texttt{termination}$.
 
 In order to convert mutual recursive functions, the name of all the related functions need to be provided.
 This cannot be used to convert multiple not related functions at once.
@@ -45,4 +45,4 @@ This behaviour is chosen as it does not change the given equations.
 Therefore it avoids differences between the original and the timing function,
 which would create problems for the automatic termination proof in some cases.
 This will fail in some cases as for incomplete matching.
-Then the converter falls back to sequential mode and print out a warning.
+Then the converter falls back to sequential mode and prints out a warning.

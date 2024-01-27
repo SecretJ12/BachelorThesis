@@ -1,48 +1,49 @@
 
 \section{Restrictions} \label{chapter:restrictions}
-Converting functions to their timing function starts simple if restricting it to simple functions.
-But as always supporting more and more functions makes the code of the converter getting bigger and harder to read.
-In order to still keep the code maintainable some restrictions were set.
+
+Converting functions to their timing function starts simple if it is restricted to simple functions.
+However, as always, supporting more and more functions makes the converter's code bigger and more challenging to read.
+In order to keep the code maintainable, some restrictions were set.
 The following section is going to explain and justify the current restrictions.
 
 \subsection{Functions in datatypes}
-As described earlier there is a translations for functions being passed as arguments.
-Extending this for functions contained in pairs is straight forward, as the datatype inside of pairs are not fixed.
+As described earlier, there is a translation for functions that are passed as arguments.
+Extending this for functions contained in pairs is straightforward, as the datatypes inside of pairs are not fixed.
 The converter supports this automatically.
-For arbitrary datatypes this no longer holds.
-For example imagine a datatype with a constructor taking a function.
-We cannot change the argument to a pair of functions as it is already fixed by the datatype.
-Therefore it would be needed create a new datatype taking the mentioned type.
+For arbitrary datatypes, this no longer holds.
+For example, imagine a datatype with a constructor taking a function.
+We cannot change the argument to a pair of functions as the datatype already fixes it.
+Therefore, creating a new datatype taking the mentioned type would be needed.
 As creating new datatypes is not in the wanted scope of this converter, it is not supported.
 
 \subsection{Operations on datatypes} \label{chapter:nonconstant_zeros}
-Most basic operations as the equals operator ``='' are marked as zero function.
-For simple datatype as nat we can easily argue that a comparsion can be made in constant time.
+Most basic operations, such as the equals operator ``='', are marked as zero functions.
+We can easily argue that a comparison can be made in constant time for a simple datatype such as nat.
 This no longer holds for slightly more complicated types as lists.
-The exact time for the comparision of two lists would at least be linear through the length of the list.
+The exact time for comparing two lists would at least be linear through the length of the list.
 The command would need to register a timing version for every datatype the operator could be used with.
-In order to support all datatype this had to happen in the $\texttt{datatype}$ command itself.
-Therefore it is the users responsibility to only use those zero operators in timing functions if the constant time can be justified.
-For the equality operator this would be the case if one of the sides is a constant as the empty list.
+In order to support all datatypes, this had to happen in the $\texttt{datatype}$ command itself.
+Therefore, it is the user's responsibility to only use those zero operators in timing functions if the constant time can be justified.
+This would be the case for the equality operator if one of the sides is a constant as the empty list.
 
-Also the $\texttt{length}$ function for lists is part of this problem.
-The function itself is an abbreviation to the size operator which is automatically created for each datatype.
+Also, the $\texttt{length}$ function for lists is part of this problem.
+The function is an abbreviation of the size operator, which is automatically created for each datatype.
 Converting it directly will create problems.
-Instead we can use size equations created for the list datatype.
-Specifying them in the command will give us the wanted result.
+Instead, we can use size equations created for the list datatype.
+Specifying them in the command will give us the desired result.
 Listing \ref{lst:restr_length} shows the full command.
 \begin{lstlisting}[language=isabelle,float,label=lst:restr_length,caption=Converting the length function correctly]
   define_time_fun length equations list.size(3) list.size(4)
 \end{lstlisting}
 
 \subsection{Partial application}
-As described in chapter \ref{chapter:rel_curried} Sands also proposes a translation schema for curried functions.
+As described in chapter \ref{chapter:rel_curried}, Sands also proposes a translation schema for curried functions.
 This schema cannot be used here as Isabelle uses a strict type system.
 Trying to define Sands' $\texttt{app'}$ function as defined in listing \ref{lst:curried_app'} will fail in Isabelle.
-This is the case, because inside the then branch the outcome of the func part is returned, while the else branch returns a triple.
-However the function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
-But as the arity counter is not coupled to the timing function itself, the timing function always needs to be of the form $\texttt{'a $\Rightarrow$ nat}$.
-This is not a wanted behaviour, as we also want to evaluate the cost of a function with more than one argument left.
+This is the case because, inside the then branch, the outcome of the func part is returned, while the else branch returns a triple.
+However, the function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
+However, as the arity counter is not coupled to the timing function itself, the timing function always needs to be of the form $\texttt{'a $\Rightarrow$ nat}$.
+This type is not a wanted behavior, as we also want to evaluate the cost of a function with more than one argument left.
 
-To overcome this issue we would need to couple the counter to the number of arguments more closely.
-As this would involve a more complex datatype this is not in scope of the converter.
+To overcome this issue, we would need to couple the counter to the number of arguments more closely.
+As this would involve a more complex datatype, this is outside the scope of the converter.

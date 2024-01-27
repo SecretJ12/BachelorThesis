@@ -1,31 +1,30 @@
 
 \section{Schema} \label{chapter:impl_schema}
-
-For first order functions the translation schema equals the schema used by Nipkow \parencite{fds}.
+For first-order functions, the translation schema equals the schema used by Nipkow \parencite{fds}.
 All cases defined by Sands also equal this schema \parencite{sands}.
 Therefore, the proof described in chapter \ref{chapter:formal} holds for this restricted part of the schema.
 
-Just as Nipkow we treat some functions differently.
-Here those functions are called zero functions.
+Just like Nipkow, we treat some functions differently.
+Here, those functions are called zero functions.
 They include constructors and some basic mathematical operations and comparisons.
-Additionally the user is able the mark any function as zero function.
+Additionally, the user can mark any function as zero function.
 The command and the functions marked as zero by default can be found in chapter \ref{chapter:commands}.
-Only functions taking a constant amount of time should be marked as zero function.
-The user is obliged to only mark correct functions.
-A discussion about this can be found in chapter \ref{chapter:nonconstant_zeros}.
+Only functions taking a constant amount of time should be marked as zero functions.
+The user is obliged to mark only correct functions.
+Section \ref{chapter:nonconstant_zeros} contains a discussion about this.
 
-Additionally the schema was extended for higher order functions similar to Sands as described in chapter \ref{chapter:higher_order}.
-Every argument being a function will be replaces by a pair of the function and its timing function.
-To deal with those constructs we first need to define two helper functions.
+Additionally, the schema was extended for higher-order functions similar to Sands as described in chapter \ref{chapter:higher_order}.
+Every argument being a function will be replaced by a pair of the function and its timing function.
+We first need to define two helper functions to deal with those constructs.
 $\mathcal{N}$ will replace all occurences of a passed function $f$ by $\texttt{(fst f)}$.
-As a result we get an expression evaluating to the normal result as in the original function.
+As a result, we get an expression evaluating to the normal result as in the original function.
 The definition can be found in figure \ref{fig:schema_N}.
-The function $\mathcal{A}$ converts an expression to be passed as argument to a timing function.
+The function $\mathcal{A}$ converts an expression for being passed as an argument to a timing function.
 All defined constants of non-primitive functions will be converted into the wanted pair.
-For primitive functions the second argument will be a lambda taking the same amount of arguments and returning $0$.
-For passed functions we don't need to change something, as they already are pairs.
+For primitive functions, the second argument will be a lambda, taking the same number of arguments and returning $0$.
+We do not need to change something for passed functions, as they are already pairs.
 All the other expressions will be converted by the function $\mathcal{N}$ as they should be evaluated as normal.
-As we don't support curried functions, those expressions cannot evaluate to a function and therefore won't create problems.
+As we do not support curried functions, those expressions cannot evaluate to a function and, therefore, will not create problems.
 The definition for $\mathcal{A}$ is described in figure \ref{fig:schema_A}.
 \begin{figure}
 \begin{align*}
@@ -47,12 +46,12 @@ The definition for $\mathcal{A}$ is described in figure \ref{fig:schema_A}.
   \label{fig:schema_A}
 \end{figure}
 
-We now define the function $\mathcal{F}$ which converts a given function application into the application of the timing function.
-All zero function will be translated to $0$ as their evalution does not cost anything by definition.
-Defined function get translated to the application of their timing function.
+We now define the function $\mathcal{F}$, which converts a given function application into the application of the timing function.
+All zero functions will be translated to $0$ as their evaluation does not cost anything by definition.
+Defined functions get translated to the application of their timing function.
 All functions given as arguments should also be translated to an application of their timing function.
 As those arguments are now represented as a pair, we need to use the second element to receive the timing function.
-The previously defined function $\mathcal{A}$ is used to prepare arguments for the timing function.
+We use the previously defined function $\mathcal{A}$ to prepare arguments for the timing function.
 We will handle the cost of the arguments in the next step.
 The schema is defined in figure \ref{fig:schema_F}.
 \begin{figure}
@@ -67,8 +66,8 @@ The schema is defined in figure \ref{fig:schema_F}.
 
 $\mathcal{T}$ is the main conversion function, defined in figure \ref{fig:schema_T}.
 It converts expressions just as defined by Nipkow.
-The only exception are expression which are needed to be evaluated normally.
-As the schema provided by Nipkow is restricted to first order function we need to pass those expression through our defined function $\mathcal{N}$.
+The only exceptions are expressions that need to be evaluated normally.
+As the schema provided by Nipkow is restricted to first-order functions, we need to pass those expressions through our defined function $\mathcal{N}$.
 This happens in the cases of $\texttt{if-else}$, $\texttt{case}$ and $\texttt{let}$.
 \begin{figure}
 \begin{align*}
@@ -83,11 +82,11 @@ This happens in the cases of $\texttt{if-else}$, $\texttt{case}$ and $\texttt{le
   \label{fig:schema_T}
 \end{figure}
 
-Finally we can define the function $\mathcal{C}$ transforming function definitions.
+Finally, we can define the function $\mathcal{C}$ transforming function definitions.
 The converter differs between recursive and non-recursive functions.
 Recursive functions will be translated with a leading $1+$, while this is left out at non-recursive functions.
 This can be justified as the function call only represents a constant at non-recursive functions.
-Therefore the asymptotic running time class does not change.
+Therefore, the asymptotic running time class does not change.
 The schema is defined in figure \ref{fig:schema_C}.
 
 \begin{figure}

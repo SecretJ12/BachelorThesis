@@ -3,40 +3,46 @@
 \section{Commands}\label{chapter:commands}
 
 The implementation provides three commands.
-The command $\texttt{define\_time\_fun}$ should mainly be used to convert a function.
-It accepts the name of the function as arguments and optionally takes function equations after the keyword $\texttt{equations}$.
-The full schema is shown in listing \ref{lst:cmds}.
+The main one is $\texttt{define\_time\_fun}$.
+It accepts the name of a function as argument, converts it and registers its running time function.
+Additionally it tries to proof the termination automatically.
+Details on this proof can be found in section \ref{chapter:termination}.
 
-The command tries to proof the termination automatically.
-Details on the proof can be found in chapter \ref{chapter:termination}.
-If the automatic proof takes to much time or even fails, the command $\texttt{define\_time\_function}$ can be used.
-The schema is equal to $\texttt{define\_time\_fun}$.
-Proofing termination for it works just as for the $\texttt{function}$ command by using $\texttt{termination}$.
+Although the termination proof should work automatically for most functions there are still edge cases, where it takes up too much time or even fails.
+Therefore the command $\texttt{define\_time\_function}$ exists.
+Similar to the command $\texttt{function}$ it only registeres the running time function.
+Afterwards the user needs to proove termination manually using the command $\texttt{termination}$.
 
-The translation schema converts zero functions differently, see chapter \ref{chapter:impl_schema}.
-Listing \ref{lst:primitive} shows all the functions, that are marked zero by default.
-With the command $\texttt{define\_time\_0}$ you can mark more functions as zero.
+In order to convert mutual recursive functions, the name of all the related functions need to be provided.
+This cannot be used to convert multiple not related functions at once.
+Sometimes we also want to specify the used function equations explicitely.
+This can be helpful for some cases as explained in \ref{chapter:nonconstant_zeros}.
+To add the equations one needs to use the keyword $\texttt{equations}$ followed by the wanted equations.
+The full command schema can be found in listing \ref{lst:cmds}.
 
-To convert mutual recursive functions, you need to provide all all depending functions.
-This cannot be used to convert multiple not already mutual recursive functions at once.
-
-\begin{lstlisting}[float,label=lst:primitive,caption=Functions primitive by default,mathescape=true]
-  +, -, *, /, div, <, $\le$, Not, $\land$, $\lor$, =, Num.numeral_class.numeral
-\end{lstlisting}
+The translation schema converts functions marked as zero differently, see section \ref{chapter:impl_schema}.
+With the command $\texttt{define\_time\_0}$ more functions can me marked as zero.
+This should be used with care and only for functions with a constant running time.
+Section \ref{chapter:nonconstant_zeros} includes a discussion on that.
+In listing \ref{lst:primitive} all default zero functions can be found.
 
 \begin{lstlisting}[float,label=lst:cmds,caption=Schema of implemented command]
-  define_time_fun {NameOfFunction}+ [equations {thms list}]
-  define_time_function {NameOfFunction}+ [equations {thms list}]
+  define_time_fun {NameOfFunction}+ [equations {thm}+]
+  define_time_function {NameOfFunction}+ [equations {thm}+]
   define_time_0 {NameOfFunction}
 \end{lstlisting}
 
-By default timing functions will be registered with the prefix ``$\texttt{T\_}$''.
-If you need to change this behaviour the configuration variable $\texttt{time\_prefix}$ can be adjusted.
-Most of the time this should be not be changed to avoid confusion and incompatibilities.
+\begin{lstlisting}[float,label=lst:primitive,caption=Zero functions by default,mathescape=true]
+  +, -, *, /, div, <, $\le$, Not, $\land$, $\lor$, =, Num.numeral_class.numeral
+\end{lstlisting}
 
-The converter will try to register the function without sequential mode first.
-This is the default of the $\texttt{function}$ command.
-The behaviour is chosen as it avoids differences between the original and the timing function,
-which would create problems for the autoamtic termination proof in some cases.
-If this fails the converter falls back to sequential modde.
-A warning is shown in the output.
+By default timing functions will be registered with the prefix ``$\texttt{T\_}$''.
+To change this behaviour the configuration variable $\texttt{time\_prefix}$ can be adjusted.
+Most of the time this should be not be changed in order avoid confusion and incompatibilities.
+
+The converter will try to register the function without sequential mode first, which is the default of the $\texttt{function}$ command.
+This behaviour is chosen as it does not change the given equations.
+Therefore it avoids differences between the original and the timing function,
+which would create problems for the automatic termination proof in some cases.
+This will fail in some cases as for incomplete matching.
+Then the converter falls back to sequential mode and print out a warning.

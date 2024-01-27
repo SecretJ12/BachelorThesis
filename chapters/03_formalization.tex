@@ -4,38 +4,38 @@
 \chapter{Formalization}\label{chapter:formal}
 
 Sands provides a correctness proof for all translation schemas presented in chapter \ref{chapter:relwork}.
-In this chapter we take a look at the correctness proof for a first order language.
+This chapter looks at the correctness proof for a first-order language.
 The proof was formalized in Isabelle and can be found in the associated GitHub repository [\#TODO link].
-The term cost function is used interchangeable for timing function here.
+The term cost function is used interchangeably for timing function here.
 
-We start by defining the first order imperative language.
+We start by defining the first-order imperative language.
 The datatype $\texttt{val}$ represents the type our language operates over.
 It needs to fulfill two requirements.
-The language shoud work with arbitrary types, which we do not want to define yet.
-In order to count the number of function calls we need a type which is able to count them.
-Therefor we cefine a type $\texttt{value}$ which is not further specified.
+The language should work with arbitrary types we do not want to define yet.
+In order to count the number of function calls, we need a type that can count them.
+Therefore, we define a type $\texttt{value}$, which is not further specified.
 This represents our arbitrary type.
-Based on this we define the constructors for out datatype.
-The $\texttt{V}$ constructor maps the arbitrary type and the $\texttt{N}$ constructor wraps the natural numbers we gonna use for counting.
+Based on this, we define the constructors for our datatype.
+The $\texttt{V}$ constructor maps the arbitrary type and the $\texttt{N}$ constructor wraps the natural numbers we will use for counting.
 Therefore it fulfills our requirements.
 \begin{lstlisting}[language=isabelle]
 typedecl "value"
 datatype val = N nat | V "value"
 \end{lstlisting}
 
-For if-else constructs we need a boolen interpretation of our datatype.
+For if-else constructs, we need a boolean interpretation of our datatype.
 We define the natural number type with 0 as false and everything else as true.
 \begin{lstlisting}[mathescape=true,language=isabelle]
 definition false :: "val => bool" where "false v $\equiv$ v = N 0"
 definition true :: "val => bool" where "true v $\equiv$ $\neg$ false v"
 \end{lstlisting}
 
-Just as explained in the last chapter we differ between primitive and non-primitive functions.
-The call of a primitive function is free while calling a non-primitive function costs 1.
-In the following non-primitive functions will only be referred to as functions.
-For each of them we now define a datatype prepresenting an identifier.
-For functions we also need to differ between an identfier for a function and its respective cost function.
-This avoids collisions in the namespace for the final correctness proof.
+As explained in the last chapter, we differ between primitive and non-primitive functions.
+The call of a primitive function is free, while a non-primitive function call costs 1.
+In the following, we will refer to non-primitive functions only as functions.
+For each of them, we now define a datatype representing an identifier.
+For functions, we also need to differentiate between an identifier for a function and its respective cost function.
+This distinction avoids collisions in the namespace for the final correctness proof.
 \begin{lstlisting}[language=isabelle]
 datatype funId =
   Fun string
@@ -44,8 +44,8 @@ datatype pfunId = pFun string
 \end{lstlisting}
 
 We can now define expressions.
-An application takes a list of arguments each represented by another expression.
-For better readability we introduce \$ for function applications and \$\$ for primitive function applications.
+An application takes a list of arguments, each represented by another expression.
+For better readability, we introduce \$ for function applications and \$\$ for primitive function applications.
 The whole datatype can be found in listing \ref{lst:exp}.
 \begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle,escapeinside={@}{@}]
 datatype exp =
@@ -58,26 +58,26 @@ datatype exp =
 
 The datatype storing all registered functions is called $\texttt{defs}$.
 It is a simple function mapping a function id to an expression wrapped by an option.
-The option is again to deal with possible name space collisions later.
+The option is again to deal with possible namespace collisions later.
 \begin{lstlisting}[mathescape=true,language=isabelle]
 type_synonym defs = "funId => exp option"
 \end{lstlisting}
 
-For primitive functions there is no mapper but a direct primitive application function.
+For primitive functions, there is no mapper but a direct primitive application function.
 It takes the name of a primitive function and a list of arguments.
 The application function should be universal in order to support any kinds of primitive functions on different machines.
 As the translation schema demands addition, we assume the function $\texttt{sum}$ to be defined.
 All the arguments need to be of the defined number type.
-We can assume this function to be constant although it takes an arbitrary amount of arguments.
-This is justified as the number of arguments is fixed in every expression.
+We can assume this function to be constant, although it takes an arbitrary amount of arguments.
+This choice is justified as the number of arguments is fixed in every expression.
 \begin{lstlisting}[mathescape=true,language=isabelle]
 axiomatization pApp :: "string => val list => val" where
   sum: "pApp ''sum'' es = (N o sum_list o map val_to_nat) es"
 \end{lstlisting}
 
-Inside a function the passed arguments will be available as local variables.
-Those local variables are contained in the environment represented by a list of values.
-Inside an expression we can refer to a value through $\texttt{Ident}$.
+Inside a function, the passed arguments will be available as local variables.
+Those local variables are contained in the environment, represented by a list of values.
+We can refer to a value inside an expression through $\texttt{Ident}$.
 The selected number represents the index of the environment list.
 \begin{lstlisting}[language=isabelle]
 type_synonym env = "val list"
@@ -106,13 +106,13 @@ If2:  "$\rho$, $\phi$ |- b -> v ==> false v
   ==> $\rho$, $\phi$ |- f -> ef ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> ef"
 \end{lstlisting}
 
-For the eval semantic we can show determinism stated by
+For the eval semantic, we can show determinism stated by
 \begin{equation*}
  \llbracket \rho, \phi \hvdash e \hrightarrow v; \text{ } \rho, \phi \hvdash e \hrightarrow v' \rrbracket \Longrightarrow v = v'.
 \end{equation*}
 
-The prove is an induction over eval which can be solved mostly automatically by metis and blast.
-In the next step we define a step-counting semantic of the form
+The proof is an induction over eval, which can be solved mostly automatically by metis and blast.
+In the next step, we define a step-counting semantic of the form
 \begin{equation*}
   \rho, \phi \hvdash e \hrightarrows (v,t)
 \end{equation*}
@@ -138,13 +138,13 @@ cIf2:  "$\rho$, $\phi$ |- b ->s (eb,tb) ==> false eb ==> $\rho$, $\phi$ |- f ->s
 
 We now want to show the equivalence of the semantics according to the resulting value.
 Showing the implication from the step-counting semantic to the normal semantic can be done by induction over the induction schema of the step-counting semantic.
-All cases can be handled by auto.
+The auto tactic can handle all cases.
 \begin{lstlisting}[language=isabelle,mathescape=true]
   lemma eval_count_eval: "$\rho$, $\phi$ |- b ->s (v,t) ==> $\rho$, $\phi$ |- b -> v"
   by (induction $\rho$ $\phi$ b "(v,t)" arbitrary: v t rule: eval_count.induct) auto
 \end{lstlisting}
 
-For the other direction we need a lengthy auxiliary lemmo to deal with the arguments of function applications.
+For the other direction, we need a lengthy auxiliary lemmo to deal with the arguments of function applications.
 It states the following:
 \begin{lstlisting}[language=isabelle,escapeinside={@}{@},mathescape=true]
 lemma eval_eval_count':
@@ -154,23 +154,23 @@ lemma eval_eval_count':
              $\land$ ($\forall$i. (i < length vs $\longrightarrow$ $\rho$, $\phi$ |- (es!i) ->s (vs!i,ts!i)))"
 \end{lstlisting}
 
-The lemma is shown as an induction over the length of vs with arbitrary es using the assumptions.
-While the Nil case can be handled by simp, the Cons case needs some more effort.
-We get the premise generated for the assumption tex for $\texttt{v\#vs}$.
-From here we can easily show that this implies the same for $\texttt{vs}$.
-With this result we can now use the IH and obtain the $\texttt{ts}$ wanted for the $\texttt{vs}$.
-From the assumption tex we can now also obtain $\texttt{t}$ for $\texttt{v}$.
+The lemma is shown as an induction over the length of $\texttt{vs}$ with arbitrary es using the assumptions.
+While the simp tactic can handle the Nil case, the Cons case needs more effort.
+We get the assumption tex as premise for $\texttt{v\#vs}$.
+We can easily show that this implies the same for $\texttt{vs}$.
+With this result, we can now use the IH and obtain the $\texttt{ts}$ wanted for the $\texttt{vs}$.
+We can obtain $\texttt{t}$ for $\texttt{v}$ from the assumption of tex.
 Combining this gives the second part of the result.
-The equality of the length can be seen easily from this, which completes the proof.
+The length equality can be seen easily from here, which completes the proof.
 
-With the help of this lemma is now possible to show the direction from eval semantic to step-counting semantic by induction of the eval semantic.
-This gives us the equivalance of the two semantics according to the evaluation result.
+With the help of this lemma it is now possible to show the direction from eval semantic to step-counting semantic by induction of the eval semantic.
+These results give us the equivalence of the two semantics according to the evaluation result.
 
-Sands also claims in a proposition, that the counting result of the step-counting semantic equals the count the rule F was used in the eval semantic.
-This is quite laborious in Isabelle, while only providing a proof for an easy to see step.
-Therefore the proof is neglected.
+Sands also claims in a proposition that the counting result of the step-counting semantic equals the count the rule F was used in the eval semantic.
+This setup is quite laborious in Isabelle while only providing a proof for an easy-to-see step.
+Therefore, we neglect this proof.
 
-We can now define the main function converting an expression to its cost function.
+We can now define the main function, which converts an expression to its cost function.
 The used schema corresponds to the one presented in \ref{chapter:first_order}.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@},caption=Translation function for expressions]
 fun $\mathcal{T}$ :: "exp => exp" where
@@ -182,9 +182,9 @@ fun $\mathcal{T}$ :: "exp => exp" where
 | "$\mathcal{T}$ (Fun f@\$@ args) = pFun ''sum''@\$\$@ (cFun f@\$@ args @\#@ map $\mathcal{T}$ args)"
 \end{lstlisting}
 
-Now we add a definition to convert a function expression.
-It uses the $\mathcal{T}$ function and adds $1+$ to front representing the function call.
-Based on this function, we also define the function $\texttt{conv}$.
+Now, we add a definition to convert a function expression.
+It uses the $\mathcal{T}$ function and adds $1+$ to the front representing the function call.
+We also define the function $\texttt{conv}$ based on this function.
 It alters a definition and registers the cost function for each defined function.
 Already defined cost functions will be dropped.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
@@ -197,16 +197,16 @@ fun conv :: "defs => defs" where
                                            | Some e => Some (cost e))"
 \end{lstlisting}
 
-For the final correctness theorem we need a property claiming that in a given definition no timing function is defined.
-This avoids errors of already referenced timing functions being dropped by the conv function.
+For the final correctness theorem, we need a property claiming that no timing function is defined in a given definition.
+This property avoids errors of already referenced timing functions being dropped by the conv function.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 definition no_time where
   "no_time $\phi$ = ($\forall$f. $\phi$ (cFun f) = None)"
 \end{lstlisting}
 
-In order to better deal with this property we define another auxiliary lemma.
-It states that if there is no timing function then the evaluation result does not change when the expression is converted using $\texttt{conv}$.
-The lemma is proved over induction with a helping lemma claming conv does not change defined functions.
+In order to better deal with this property, we define another auxiliary lemma.
+It states that if there is no timing function, then the evaluation result does not change when the expression is converted using $\texttt{conv}$.
+The lemma is proved over induction with a helping lemma claiming conv does not change defined functions.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 lemma no_time_trans:
   "no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e"
@@ -217,8 +217,8 @@ lemma eval_no_time_trans:
 \end{lstlisting}
 
 We can now show the final correctness theorem.
-Given an expression and a definition without timing function.
-If there exists an evaluation of the step-counting semantics resulting in $\texttt{t}$ then the evaluation of the converted expression and function definitions results in the same value $\texttt{t}$.
+Given an expression and a definition without a timing function.
+If an evaluation of the step-counting semantics results in $\texttt{t}$, then the evaluation of the converted expression and function definitions results in the same value $\texttt{t}$.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@},keepspaces=true]
 theorem conv_cor:
   assumes "$\rho$, $\phi$ |-e ->s(s,t)"
@@ -227,8 +227,8 @@ theorem conv_cor:
 \end{lstlisting}
 
 The theorem is proved by induction over the step-counting semantic.
-While the simplest cases Id and C can be solved automatically, we need an Isar proof for the other cases.
-In the following we take a look at the most important case F used for applying a function.
+While the simplest cases, Id and C, can be solved automatically, we need an Isar proof for the other cases.
+In the following, we look at the most important case F, which represents the application of a function.
 We have the following assumptions:
 \begin{align}
   &\text{length es = length vs = length ts} \label{cor:len}\\
@@ -246,34 +246,34 @@ We need to show
   \rho, \text{conv}\ \phi \vdash\mathcal{T} (\text{f\$ es})\rightarrow \text{N} (1 + \text{t} + \text{sum\_list}\ \text{ts}).
 \end{equation*}
 
-The cost for a function application consists of the cost for the function evaluation as well as the cost for the evaluation of the arguments.
+The cost for a function application consists of the cost of the function evaluation and the cost of evaluating the arguments.
 We start with the cost for the function evaluation represented by evaluating the timing function.
-By using the rule for primitive application of the evaluation semantic we can conclude the following equation
+By using the rule for primitive application of the evaluation semantic, we can conclude the following equation
 \begin{equation*}
 \text{vs, conv } \phi \hvdash \text{(pFun sum)\$\$ } [  \text{Const (N 1), } \mathcal{T}\ \text{fe} ] \hrightarrow \text{ N (1 + t)}.
 \end{equation*}
-The needed premises can be derived from \ref{cor:Tfeeval} and the axiom for primitive functions. From here we only need to use the definition of the cost function to gain a statement about the cost term of the function.
+The needed premises can be derived from \ref{cor:Tfeeval} and the axiom for primitive functions. From here, we only need to use the definition of the cost function to gain a statement about the cost term of the function.
 \begin{equation}
 \text{vs, conv } \phi \hvdash \text{cost fe} \hrightarrow \text{ N (1 + t)}.
 \end{equation}
-In the next step we show, that calling the cost function results in the same as evaluating its expression.
-For this we need the evaluation of the arguments $\texttt{es}$.
+In the next step, we show that calling the cost function results in the same as evaluating its expression.
+For this, we need the evaluation of the arguments $\texttt{es}$.
 The evaluated result $\texttt{vs}$ is already given for the step-counting evaluation in \ref{cor:args}.
-Here we can use the lemma $\texttt{eval\_count\_eval}$ stating that the result is the same for the normal semantic.
+Here, we can use the lemma $\texttt{eval\_count\_eval}$ stating that the result is the same for the normal semantic.
 \begin{equation*}
 \forall \text{ i<length vs. } \rho \text{, } \phi \hvdash \text{es ! i } \hrightarrow \text{ vs ! i}
 \end{equation*}
-From this we use the lemma eval\_no\_time\_trans with \ref{cor:notime} and can conclude that the result also stays the when the function definitions are converted.
+From this, we use the lemma eval\_no\_time\_trans with \ref{cor:notime} and can conclude that the result stays the same when the function definitions are converted.
 \begin{equation} \label{eq:func_args}
 \forall \text{ i<length vs. } \rho \text{, conv}\ \phi \hvdash \text{es ! i } \hrightarrow \text{ vs ! i}
 \end{equation}
 
-From \ref{cor:phi} and \ref{cor:notime} we can conclude that f is an identifier for timing functions, therefore
+From \ref{cor:phi} and \ref{cor:notime}, we can conclude that f is an identifier for timing functions. Therefore
 \begin{equation*}
   \text{conv } \phi \text{ f = Some fe}
 \end{equation*}
 holds.
-Using this with \ref{cor:len} and the equation \ref{eq:func_args} we can use the rule for function application to gain the wanted intermediate step
+Using this with \ref{cor:len} and the equation \ref{eq:func_args}, we can use the rule for function application to gain the wanted intermediate step
 \begin{equation} \label{eq:func_id}
   \rho \text{, conv }\phi \hvdash \text{ cFun fn\$ es } \hrightarrow \text{ N (1 + t).}
 \end{equation}
@@ -283,14 +283,14 @@ From \ref{cor:args} with \ref{cor:len} and \ref{cor:notime} the mapping of the a
 \begin{equation*}
   \forall \text{i<length (map } \mathcal{T}\text{ es). }\rho\text{, conv }\phi \hvdash\text{ (map }\mathcal{T}\text{ es) ! i }\hrightarrow \text{ (map N ts) ! i}
 \end{equation*}
-In combination with equation \ref{eq:func_id} we get the full list of arguments for the final sum function.
+Combined with equation \ref{eq:func_id}, we get the full list of arguments for the final sum function.
 \begin{equation*}
   \begin{aligned}
   &\forall \text{i<length (cFun fn\$ es \# map } \mathcal{T}\text{ es). } \\
   &\rho\text{, conv }\phi \hvdash\text{ (cFun fn\$ es \# map }\mathcal{T}\text{ es) ! i }\hrightarrow \text{ ((N (1 + t)) \# (map N ts)) ! i}
   \end{aligned}
 \end{equation*}
-With this, \ref{cor:len} and the axiom for sum we can now use the rule for primitive function application and show the wanted result.
+With this, \ref{cor:len} and the axiom for sum, we can now use the rule for primitive function application and show the wanted result.
 \begin{equation*}
   \rho \text{, conv } \phi \hvdash \mathcal{T}\text{ (f \$ es) }\hrightarrow\text{ N (1 + t + sum\_list ts)}
 \end{equation*}

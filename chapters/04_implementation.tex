@@ -3,12 +3,14 @@
 
 \chapter{Implementation}\label{chapter:impl}
 
-The translation of a function to its running time function was implemented for Isabelle.
-The commands needed for this are explained in chapter \ref{chapter:commands}.
-In chapter \ref{chapter:impl_schema} the used schema is presented.
-There is an automation for the termination proof of the running time function.
-The details on this can be found in \ref{chapter:termination}.
-Chapter \ref{chapter:restrictions} defines all the restrictions the current implementation has.
+The main work of this thesis was the implementation of an automatic converter of functions to their running time function for Isabelle.
+This chapter explains the usage and the behaviour of the automatic converter.
+Section \ref{chapter:commands} shows the form of the added commands.
+In the next section \ref{chapter:impl_schema} we take a look at the conversion schema used by the converter.
+In order to provide a pleasant user experience there exists an automatic termination proof for the running time function.
+The details on this can be found in section \ref{chapter:termination}.
+As defining running time functions can get quite complicated, there exist some restriction in order to keep the implemetation readable.
+Those restrictions are represented in section \ref{chapter:restrictions}.
 
 \input{chapters/04_01_commands.tex}
 \input{chapters/04_02_schema.tex}

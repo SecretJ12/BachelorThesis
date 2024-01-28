@@ -1,5 +1,6 @@
 /build/*
 !/build/main.pdf
+!/build/dark.pdf
 /logos/*.pdf
 
 ## Core latex/pdflatex auxiliary files:

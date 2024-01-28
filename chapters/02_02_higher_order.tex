@@ -1,44 +1,51 @@
 
 \section{Higher Order functions} \label{chapter:higher_order}
 
-The goal of this chapter is to extends the schema so for for higher order functions.
-First take a look at the function $\texttt{test}$.
-\begin{lstlisting}[language=isabelle,mathescape=true]
+In this chapter, we want to extend the schema for higher-order functions.
+First, we look at the function $\texttt{test}$ in listing \ref{lst:ho_test}.
+\begin{lstlisting}[language=isabelle,mathescape=true,label=lst:ho_test,caption=Example function]
   fun test :: "(nat => bool) => nat => nat" where
     "test f a = (if f a then 1 else 0)"
 \end{lstlisting}
-Applying the translation for first order functions yields the following expression.
+Applying the translation $\mathcal{T}$ for first-order functions onto the expression yields us
 \begin{lstlisting}[language=isabelle,mathescape=true]
-  T_f a + (if f a then 0 else 0)
+  T_f a + (if f a then 0 else 0).
 \end{lstlisting}
 
 This example shows that we need a way to address the original function as well as the timing function.
-As we cannot generate the timing function dynamically Sands proposes to change every function argument by an pair \parencite{sands}.
-First element is the original function (referenced by $\texttt{fun}$) second is the timing function (referenced by $\texttt{time}$).
-Using this idea we can already convert the whole function.
-\begin{lstlisting}[language=isabelle,mathescape=true]
-  fun T_test :: "('a => bool) => 'a => nat" where
+As we cannot generate the timing function at runtime, Sands proposes to change every function argument by a pair \parencite{sands}.
+The first element is the original function and the second is the timing function.
+Using this idea, we can convert the whole function as shown in listing \ref{lst:ho_T_test}.
+\begin{lstlisting}[language=isabelle,mathescape=true,label=lst:ho_T_test,caption=Timing function of example function]
+  fun T_test :: "('a => bool) $\times$ ('a => nat) => 'a => nat" where
     "T_test f a = 1 + snd f a + (if fst f a then 1 else 0)"
 \end{lstlisting}
-Loosely spoken we need to use $\texttt{snd}$ everywhere the timing function is needed and $\texttt{fst}$ in case of a normal evaluation.
-In order to formalize this Sand uses two distinct functions.
-He uses them to convert every function $\texttt{f}$ into function $\texttt{f'}$ evaluating to the same result but with the described instead of function as input and the cost function $\texttt{cf}$.
+In general, we need to use $\texttt{snd}$ everywhere the timing function is needed and $\texttt{fst}$ in case of a normal evaluation.
+For every function $\texttt{f}$ he generates two functions $\texttt{f'}$ and $\texttt{cf}$.
+The function $\texttt{f'}$ evaluates to the result of the original function but with the described pair instead of functions as an argument.
+The function $\texttt{cf}$ is the timing function, called cost function by Sands.
+The translation schema is described in figure \ref{fig:higher_transl}.
 \begin{figure}
   \begin{align*}
   f'\ x_{1}\ \dots\ x_{n} &= \mathcal{V}\llbracket e \rrbracket \\
   cf\ x_{1}\ \dots\ x_{n} &= 1 + \mathcal{N}o\mathcal{V}\llbracket e \rrbracket
   \end{align*}
-  \caption{Translation schema for higher order function definitions}
+  \caption{Translation schema for higher-order function with expression $e$}
+  \label{fig:higher_transl}
 \end{figure}
 
+He uses the two referenced functions $\mathcal{V}$ and $\mathcal{T}$ for conversion.
 The function $\mathcal{V}$ replaces every function identifier by the described pair.
-Therefore it makes shure that every function will be called with the expected pair.
-For every application the function $\texttt{fun}$ is used.
-Therefore the whole expression evaluates to the same result as the original expression.
+Therefore, it ensures that every function will be called with the expected pair.
+The function $\texttt{fst}$ is used for every function application.
+The result behaves as described for the function $f'$.
 The schema is described in figure \ref{fig:higher_V}.
-In the next step is the function $\texttt{T}$ is applied.
-Here the function $\texttt{time}$ is used in every application to get the timing function.
-The schema is written in schema \ref{fig:higher_T}.
+For the timing function, the function $\mathcal{T}$ is applied afterward.
+It behaves similarly to the schema described for the first-order function in figure \ref{fig:first_order_T}.
+The only difference is that the $\texttt{snd}$ function is used in every application to get the timing function.
+The schema is written in figure \ref{fig:higher_T}.
+Function definitions will not be converted to a pair and back by those functions.
+This optimization step could be dropped but keeps the timing function readable.
 \begin{figure}
   \begin{align*}
     \mathcal{V}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= f'\ \mathcal{V}\llbracket a_{1}\rrbracket\ \dots \ \mathcal{V}\llbracket a_{n}\rrbracket\\
@@ -47,9 +54,9 @@ The schema is written in schema \ref{fig:higher_T}.
     \mathcal{V}\llbracket \text{IF}\ c\ \text{THEN}\ e_{1}\ \text{ELSE}\ e_{2}\rrbracket &= \text{IF}\  \mathcal{V}\llbracket e_{1}\rrbracket\ \text{THEN}\ \mathcal{V}\llbracket e_{2}\rrbracket\ \text{ELSE}\ \mathcal{V}\llbracket e_{2}\rrbracket\\
     \mathcal{V}\llbracket f\rrbracket &= (f',cf)\\
     \mathcal{V}\llbracket p\rrbracket &= (p,cp)\\
-    \mathcal{V}\llbracket e\ a_{1}\ \dots\ a_{n}\rrbracket &= \texttt{fun}\ \mathcal{V}\llbracket e\rrbracket\ \mathcal{V}\llbracket a_{1} \rrbracket\ \dots\ \mathcal{V}\llbracket a_{n}\rrbracket
+    \mathcal{V}\llbracket e\ a_{1}\ \dots\ a_{n}\rrbracket &= \texttt{fst}\ \mathcal{V}\llbracket e\rrbracket\ \mathcal{V}\llbracket a_{1} \rrbracket\ \dots\ \mathcal{V}\llbracket a_{n}\rrbracket
   \end{align*}
-  \caption{Translation schema V for higher order functions}
+  \caption{Translation schema V for higher-order functions}
   \label{fig:higher_V}
 \end{figure}
 \begin{figure}
@@ -62,8 +69,21 @@ The schema is written in schema \ref{fig:higher_T}.
     \mathcal{T}\llbracket (f',cf)\rrbracket &= 0\\
     \mathcal{T}\llbracket (p,cp)\rrbracket &= 0
   \end{align*}
-  \caption{Translation T for higher order functions}
+  \caption{Translation T for higher-order functions}
   \label{fig:higher_T}
 \end{figure}
 
-\#TODO compare to Nipkow schema.
+Nipkow provides no schema for higher-order functions.
+However, as he also needs some higher-order functions for the analysis, he provides a translation.
+In listing \ref{lst:T_map_nipkow}, the translation for the $\texttt{map}$ function is shown.
+It differs from our schema as it only takes the timing function but not the original function.
+This schema works as the original function is not used but cannot be extended to all functions.
+\begin{lstlisting}[language=isabelle,mathescape=true,caption=Translation of the function map to their timing function by Nipkow,label=lst:T_map_nipkow]
+  fun map :: "('a => 'b) => 'a list => 'b list" where
+    "map f [] = []"
+  | "map f (x # xs) = f x # map f xs"
+
+  fun T_map :: "('a => nat) => 'a list => nat" where
+    "T_map f [] = 1"
+  | "T_map f (x # xs) = 1 + (f x + T_map f xs)"
+\end{lstlisting}

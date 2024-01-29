@@ -197,8 +197,8 @@ fun conv :: "defs => defs" where
                                            | Some e => Some (cost e))"
 \end{lstlisting}
 
-For the final correctness theorem, we need a property claiming that no timing function is defined in a given definition.
-This property avoids errors of already referenced timing functions being dropped by the conv function.
+For the final correctness theorem, we need a property that tells us whether a definition contains any timing function.
+This allows us to avoid dropping already referenced timing functions with the conv function.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 definition no_time where
   "no_time $\phi$ = ($\forall$f. $\phi$ (cFun f) = None)"
@@ -228,7 +228,7 @@ theorem conv_cor:
 
 The theorem is proved by induction over the step-counting semantic.
 While the simplest cases, Id and C, can be solved automatically, we need an Isar proof for the other cases.
-In the following, we look at the most important case F, which represents the application of a function.
+In the following, we look at the most important case F, which represents the function application.
 We have the following assumptions:
 \begin{align}
   &\text{length es = length vs = length ts} \label{cor:len}\\

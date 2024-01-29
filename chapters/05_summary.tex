@@ -3,30 +3,34 @@
 
 \chapter{Summary}\label{chapter:summary}
 
-This work tries to automate the conversion of functions to their running time function in Isabelle.
-Therefore we look at existing conversion schemas.
-Naturally we start by restricting the function in the beginning and look at Non-Curried First Order Functions.
-The conversion schema for this functions are quite common and similar in differnet papers.
-For Higher Order Functions only Sands explains an extension for the existing schema.
-He extends the given function to a tuple containing the function and the timing function.
-In order to also deal with curried functions he extends this pair by a counter for the number of arguments left.
-In the end we gain a schema able to deal with Higher Order Curried functions.
-Sands provides prooves for all this schemas.
-Here we only take a look at the correctness proof of the schema for First Order Functions.
-The work provides a formalization of it in Isabelle and explains it.
+This work automates the conversion of functions to their running time function in Isabelle.
+Therefore we looked at existing conversion schemas by Sands \parencite{sands} and Nipkow \parencite{fds}.
+We presented a translation schema for non-curried first-order functions.
+Afterwards we extended this schema for higher-order functions.
+To deal with the functions as arguments we extended them to pairse containing the function and the timing function.
+For the support of curried function we extended this pair by a counter for the number of arguments left.
+The next part looked at a correctness proof for the first-order functions schema.
+Sands presented this proof for his schema, and we provided a formalization of it in Isabelle.
 
-In the main part an automatic converter for functions into their running time function in Isabelle is provided.
-As the schema for Curried Function gets too complicated we restrict ourself to Non-Curried Higher Order Functions.
-Additionally we don't allow functions to be passed in datatypes as conversion of it is no quite obvious and get laborious.
+The main part presents the automatic converter for functions into their running time function in Isabelle.
+We restricted the accepted functions to non-curried higher-order functions.
+This keeps the code readable and maintainable.
+Additionally, we restrict these functions' arguments.
+Their type may not be datatypes that contain other functions, as conversion is not obvious and quickly becomes laborious.
 The used schema is based on the proposals by Sands \parencite{sands} and Nipkow \parencite{fds}.
-As a result we gain a simple command able convert the restricted functions automatically.
-It contains an automation for the termination proof based based on the $\texttt{lexicographic\_order}$ tactic first.
-If this fails a more advanced schema is used to proof termination based on the termination of the original function.
-This proof should covers most functions.
-The command was added to the Isabelle source files and will be accessible in the next major verison.
+We can now use the command $\texttt{define\_time\_fun}$ to convert a function automatically.
+It first tries to proof termination using the $\texttt{lexicographic\_order}$ tactic first.
+If this fails we use a more advance tactic that uses the termination proof of the original funcition.
+This proof covers most functions.
+We can use the command $\texttt{define\_time\_function}$ to prove termination manually.
 
-The schema for curried function proposed by Sands cannot be used in Isabelle.
-Therefore it is needed to think about an adaption of this schema to overcome the current limitation on non-curried functions.
-Additionally there is a restrictions for functions as equality defined for and by every datatype.
-Here we would need to provide a running time version specific for every datatype not just function.
-As conversion is not hard once the wanted equations have been found, extending this is a rather technical task.
+Although the converter works automatically, we need to use it with care.
+Most basic mathematical operations and comparisons are marked as zero functions.
+Those zero functions will assumed as constant and get translated to $0$.
+The constant time may not hold in certain situations as equality on lists.
+We would need to extends the datatype command to create a timing function for every overload.
+Also curried functions are not allowed.
+Sands proposed a schema to tackle them, but it does not work in Isabelle due to the strict type styem.
+To overcome this limmitation we would need to think about an adaption of this schema.
+
+The converter was added to the Isabelle distribution and will be accessible in relase 2024.

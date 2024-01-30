@@ -1,18 +1,24 @@
 \chapter{Introduction}\label{chapter:introduction}
 
-To examine new datastructures and algorithms running time is one of the most important measures.
-In order to determine the running time of a function we first need to convert them.
-Afterwards the we can use proof assistants as Isabelle to proof a certain running time.
-Currently this first conversion step is done manually in Isabelle.
-As all human tasks this can create errors and make the following proof worthless.
-Goal of this work is to create a automatic converter from functions into their running time function for Isabelle.
-The converted function will represent the number of function calls inside of a function evaluation.
-To simplify the resulting function and therefore also proofs we only consider the running time class as relevant.
-This means we will apply some improvements and drop constants.
+The running time class is one of the most important measures to examine new algorithms and data structures.
+In order to argue about it, we first need to convert the functions into their running time functions.
+They measure the running time of a function.
+Here, we use the number of function calls to do so.
+Afterward, we can use proof assistants such as Isabelle to proof a certain running time.
+In Isabelle, the user needs to do this conversion step manually.
+This can create errors and makes the following proof worthless.
+This work aims to automate the conversion from functions to their running time functions in Isabelle.
+As we only consider the running time class relevant, we simplify the resulting function, leading to simpler proofs.
+To do so, we will drop all constants that are not needed.
+Additionally, we restrict the convertible functions to keep the converter readable and maintainable.
 
-Starting with chapter \ref{chapter:relwork} we take a look at the default conversion schema used in other literature. We start with a schema for more restricted functions and relax the restrictions till with see a schema for curried higher-order functions.
-To proof the correctness of the used schema we gonna look at a proof for the conversion schema in chapter \ref{chapter:formal}. The proof was formalized in Isabelle.
-In chapter \ref{chapter:impl} we take a look at the actual implementation. The chapter gives an overview on how to use the command and explains the used termination proof. In the end it also gives an overview on the current restrictions the converter cannot be used for.
+Starting with chapter \ref{chapter:relwork}, we look at the conversion schema used in literature.
+We start with a schema for more restricted functions and relax the restrictions till we see a schema for curried higher-order functions.
+To prove the correctness of the used schema, we will look at a proof for the conversion schema in chapter \ref{chapter:formal}.
+The proof was formalized in Isabelle.
+We present the implementation in chapter \ref{chapter:impl}.
+The chapter overviews the added commands and explains the termination proof used.
+Afterward, we discuss the restrictions the converter currently has.
 
-
-\#TODO isabelle version number
+The converter gets added to the Isabelle distribution.
+Therefore, the work is based on the newest Isabelle development version at the time of the work.

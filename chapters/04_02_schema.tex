@@ -1,74 +1,45 @@
 
-\section{Schema} \label{chapter:impl_schema}
-For first-order functions, the translation schema equals the schema used by Nipkow \parencite{fds}.
-All cases defined by Sands also equal this schema \parencite{sands}.
-Therefore, the proof described in \autoref{chapter:formal} holds for this restricted part of the schema.
+\section{Translation Schema} \label{chapter:impl_schema}
 
-Just like Nipkow, we treat some functions differently.
+The translation schema of the converter is based on the schemas presented for first-order functions in \autoref{chapter:first_order}.
+We use the schema by Nipkow \parencite{fds} for first-order functions as he provides a translation for all the needed cases.
+All cases defined by Sands also equal this schema \parencite{sands} as they are equal to Nipkow's translation.
+Therefore, the proof described in \autoref{chapter:formal} holds for this restricted part of the schema.
+In order to support higher-order functions, we extend the schema as described in \autoref{chapter:higher_order}.
+Every argument being a function will be replaced by a pair of the function and its timing function.
+
+Just like Nipkow and Sands, we treat some functions differently.
 Here, those functions are called zero functions.
 They include constructors and some basic mathematical operations and comparisons.
 Additionally, the user can mark any function as zero function.
-The command and the functions marked as zero by default can be found in \autoref{chapter:commands}.
+\autoref{chapter:commands} contains the command for this and all the functions marked as zero by default.
 Only functions taking a constant amount of time should be marked as zero functions.
-The user is obliged to mark only correct functions.
+The user is obliged to mark only the correct functions.
 \autoref{chapter:nonconstant_zeros} contains a discussion about this.
 
-Additionally, the schema was extended for higher-order functions similar to Sands as described in \autoref{chapter:higher_order}.
-Every argument being a function will be replaced by a pair of the function and its timing function.
-We first need to define two helper functions to deal with those constructs.
-$\mathcal{N}$ will replace all occurences of a passed function $f$ by $\texttt{(fst f)}$.
-As a result, we get an expression evaluating to the normal result as in the original function.
-The definition can be found in \autoref{fig:schema_N}.
-The function $\mathcal{A}$ converts an expression for being passed as an argument to a timing function.
-All defined constants of non-primitive functions will be converted into the wanted pair.
-For primitive functions, the second argument will be a lambda, taking the same number of arguments and returning $0$.
-We do not need to change something for passed functions, as they are already pairs.
-All the other expressions will be converted by the function $\mathcal{N}$ as they should be evaluated as normal.
-As we do not support curried functions, those expressions cannot evaluate to a function and, therefore, will not create problems.
-The definition for $\mathcal{A}$ is described in \autoref{fig:schema_A}.
-\begin{figure}
-\begin{align*}
-  \mathcal{N}\llbracket e_{1}\ e_{2}\rrbracket &= \mathcal{N}\llbracket e_{1}\rrbracket\ \mathcal{N}\llbracket e_{2}\rrbracket &&\text{| function application}\\
-  \mathcal{N}\llbracket f\rrbracket &= (\texttt{fst}\ f) &&\text{| passed function}\\
-  \mathcal{N}\llbracket c\rrbracket &= c &&\text{| constants / variables}
-\end{align*}
-\caption{Convert equation for normal evaluation}
-\label{fig:schema_N}
-\end{figure}
-
+% C C C C C C C C C C C C C C C C C C C C C C C
+We first define the function $\mathcal{C}$ transforming function definitions.
+The converter differs between recursive and non-recursive functions.
+Recursive functions will be translated with a leading $1+$, while this is left out at non-recursive functions.
+This is justified as the function call only represents a constant at non-recursive functions.
+Therefore, the asymptotic running time class does not change.
+It uses the function $\mathcal{T}$ to convert its expression into the timing version.
+\autoref{fig:schema_C} defines the schema for $\mathcal{C}$.
 \begin{figure}
   \begin{align*}
-    \mathcal{A}\llbracket f\rrbracket &= (f,\ T\_f) &&\text{| identifier of a defined non-primitive function}\\
-    \mathcal{A}\llbracket f\rrbracket &= (f, (\lambda x\ \dots\ z.\ 0)) &&\text{| identifier of a defined primitive function}\\
-    \mathcal{A}\llbracket f\rrbracket &= f &&\text{| passed function}\\
-    \mathcal{A}\llbracket e\rrbracket &= \mathcal{N}\llbracket e\rrbracket &&\text{| other expressions}
+    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = \mathcal{T}\llbracket e\rrbracket) &&\text{| non-recursive}\\
+    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = 1 + \mathcal{T}\llbracket e\rrbracket) &&\text{| recursive}
   \end{align*}
-  \caption{Preparing arguments for timing functions}
-  \label{fig:schema_A}
+  \caption{Conversion of function definitions}
+  \label{fig:schema_C}
 \end{figure}
 
-We now define the function $\mathcal{F}$, which converts a given function application into the application of the timing function.
-All zero functions will be translated to $0$ as their evaluation does not cost anything by definition.
-Defined functions get translated to the application of their timing function.
-All functions given as arguments should also be translated to an application of their timing function.
-As those arguments are now represented as a pair, we need to use the second element to receive the timing function.
-We use the previously defined function $\mathcal{A}$ to prepare arguments for the timing function.
-We will handle the cost of the arguments in the next step.
-The schema is defined in \autoref{fig:schema_F}.
-\begin{figure}
-\begin{align*}
-  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= 0 &&\text{| Zero function}\\
-  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= (T\_f\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Defined function}\\
-  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= ((snd\ f)\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Passed function}
-\end{align*}
-\caption{Handling function applications}
-\label{fig:schema_F}
-\end{figure}
-
+% T T T T T T T T T T T T T T T T T T T T T T
 $\mathcal{T}$ is the main conversion function, defined in \autoref{fig:schema_T}.
 It converts expressions just as defined by Nipkow.
 The only exceptions are expressions that need to be evaluated normally.
-As the schema provided by Nipkow is restricted to first-order functions, we need to pass those expressions through our defined function $\mathcal{N}$.
+For first-order functions, those expressions could be passed unchanged.
+We use the function $\mathcal{N}$ to achieve this for higher-order functions.
 This happens in the cases of $\texttt{if-else}$, $\texttt{case}$ and $\texttt{let}$.
 \begin{figure}
 \begin{align*}
@@ -83,18 +54,108 @@ This happens in the cases of $\texttt{if-else}$, $\texttt{case}$ and $\texttt{le
   \label{fig:schema_T}
 \end{figure}
 
-Finally, we can define the function $\mathcal{C}$ transforming function definitions.
-The converter differs between recursive and non-recursive functions.
-Recursive functions will be translated with a leading $1+$, while this is left out at non-recursive functions.
-This can be justified as the function call only represents a constant at non-recursive functions.
-Therefore, the asymptotic running time class does not change.
-The schema is defined in \autoref{fig:schema_C}.
+% F F F F F F F F F F F F F F F F F F F F F F
+The function $\mathcal{F}$ handles the cost for function applications.
+Applications to zero functions get translated to $0$ as their evaluation does not cost anything by definition.
+Application to defined functions gets translated to the application of their timing function.
+This timing function needs to be defined. Otherwise, the converter will throw an error.
+All functions passed as arguments should also be translated to an application of their timing function.
+As those arguments are now represented as a pair, we need to use the second element to receive the timing function.
+The schema is defined in \autoref{fig:schema_F}.
+\begin{figure}
+\begin{align*}
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= 0 &&\text{| Zero function}\\
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= (T\_f\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Defined function}\\
+  \mathcal{F}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= ((snd\ f)\ \mathcal{A}\llbracket a_{1}\rrbracket\ \dots\ \mathcal{A}\llbracket a_{n}\rrbracket) &&\text{| Passed function}
+\end{align*}
+\caption{Handling function applications}
+\label{fig:schema_F}
+\end{figure}
 
+% A A A A A A A A A A A A A A A A A A A A A A
+For first-order functions, the arguments for functions need to be passed unchanged.
+As we get functions as pairs for higher-order functions, we must prepare the arguments before passing them.
+Function $\mathcal{A}$. does this preparation.
+All defined constants of non-primitive functions will be converted into the wanted pair.
+For primitive functions, the second argument will be a lambda, taking the same number of arguments and returning $0$.
+We do not need to change something for passed functions, as they are already pairs.
+All the other expressions need to be evaluated as in the original function.
+Again, we use the function $\mathcal{N}$ to achieve this behavior.
+As we do not support curried functions, those expressions cannot evaluate to a function and, therefore, will not create problems.
+The definition for $\mathcal{A}$ is described in \autoref{fig:schema_A}.
 \begin{figure}
   \begin{align*}
-    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = \mathcal{T}\llbracket e\rrbracket) &&\text{| non-recursive}\\
-    \mathcal{C}\llbracket f\ a_1\ \dots\ a_n &= e\rrbracket = (T\_f\ a_{1}\ \dots\ a_{n} = 1 + \mathcal{T}\llbracket e\rrbracket) &&\text{| recursive}
+    \mathcal{A}\llbracket f\rrbracket &= (f,\ T\_f) &&\text{| identifier of a defined non-primitive function}\\
+    \mathcal{A}\llbracket f\rrbracket &= (f, (\lambda x\ \dots\ z.\ 0)) &&\text{| identifier of a defined primitive function}\\
+    \mathcal{A}\llbracket f\rrbracket &= f &&\text{| passed function}\\
+    \mathcal{A}\llbracket e\rrbracket &= \mathcal{N}\llbracket e\rrbracket &&\text{| other expressions}
   \end{align*}
-  \caption{Conversion of function definitions}
-  \label{fig:schema_C}
+  \caption{Preparing arguments for timing functions}
+  \label{fig:schema_A}
 \end{figure}
+
+% N N N N N N N N N N N N N N N N N N N N N N
+Lastly, we define the mentioned function $\mathcal{N}$.
+This function replaces all occurrences of passed function $f$ by $\texttt{(fst f)}$.
+As a result, we get an expression evaluating to the normal result as in the original function.
+The definition can be found in \autoref{fig:schema_N}.
+\begin{figure}
+\begin{align*}
+  \mathcal{N}\llbracket e_{1}\ e_{2}\rrbracket &= \mathcal{N}\llbracket e_{1}\rrbracket\ \mathcal{N}\llbracket e_{2}\rrbracket &&\text{| function application}\\
+  \mathcal{N}\llbracket f\rrbracket &= (\texttt{fst}\ f) &&\text{| passed function}\\
+  \mathcal{N}\llbracket c\rrbracket &= c &&\text{| constants / variables}
+\end{align*}
+\caption{Convert equation for normal evaluation}
+\label{fig:schema_N}
+\end{figure}
+
+The functions $\mathcal{A}$ and $\mathcal{N}$ are similar to Sands' function $\mathcal{V}$ described in \autoref{fig:higher_V}.
+Sands replaces all primitive and non-primitive function identifer by the described pair.
+Our functions only do this in the needed places.
+Additionally, he uses the first argument of the pair for function applications similar to our function $\mathcal{F}$.
+
+As an example, we look at the default map function defined in Listing 2.3. At first, we see that the function map is recursive.
+Therefore, the calling cost is 1.
+The first case is then straightforward as it only contains the constant of the empty list.
+In the second case, we must use all our defined functions to deal with the passed function f.
+The application onto the Cons function is free because Cons is a constructer.
+The translation looks the following:
+\begin{lstlisting}[mathescape=true,language=translation]
+  $\mathcal{C}\llbracket$map f [] = []$\rrbracket$
+  $\equiv$ T_map f [] = 1 + $\mathcal{T}\llbracket$[]$\rrbracket$
+  $\equiv$ T_map f [] = 1
+
+  $\mathcal{C}\llbracket$map f (x#xs) = f x # map f x$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{T}\llbracket$f x # map f x$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$Cons (f x) (map f x)$\rrbracket$ + $\mathcal{T}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$map f xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{T}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$map f xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$x$\rrbracket$ + $\mathcal{F}\llbracket$map f xs$\rrbracket$ + $\mathcal{T}\llbracket$f$\rrbracket$ + $\mathcal{T}\llbracket$xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$f x$\rrbracket$ + $\mathcal{F}\llbracket$map f xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + ((snd f) $\mathcal{A}\llbracket$x$\rrbracket$) + T_map $\mathcal{A}\llbracket$f$\rrbracket$ $\mathcal{A}\llbracket$xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + ((snd f) $\mathcal{N}\llbracket$x$\rrbracket$) + T_map $\mathcal{N}\llbracket$f$\rrbracket$ $\mathcal{N}\llbracket$xs$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + ((snd f) x) + T_map f xs
+\end{lstlisting}
+
+The result of this translation is similar to the translation Nipkow gives but with the passed function part of the pair.
+In the next example, we translate the function $\texttt{Suc\_all}$ to see how a function is passed to a timing function.
+The function is defined in \autoref{lst:schema_Suc_all}.
+
+\begin{lstlisting}[language=isabelle,caption=Example function increasing every element in list of natural numbers,label=lst:schema_Suc_all]
+fun Suc_all :: nat list => nat list where
+  Suc_all xs = map Suc xs
+\end{lstlisting}
+
+$\texttt{Suc\_all}$ is a non-recursive function, meaning the calling cost of it is free.
+The function $\texttt{T\_map}$ is already defined
+We only need to prepare the function $\texttt{Suc}$ for passing.
+$\texttt{Suc}$ is a constructor and, therefore, a zero function.
+As a result, we represent the timing function of it by a lambda returning $0$.
+The translation has the following steps:
+\begin{lstlisting}[mathescape=true,language=translation]
+  $\mathcal{C}\llbracket$Suc_all xs = map Suc xs$\rrbracket$
+  $\equiv$ T_Suc_all xs = $\mathcal{T}\llbracket$map Suc xs$\rrbracket$
+  $\equiv$ T_Suc_all xs = $\mathcal{F}\llbracket$map Suc xs$\rrbracket$ + $\mathcal{T}\llbracket$Suc$\rrbracket$ + $\mathcal{T}\llbracket$xs$\rrbracket$
+  $\equiv$ T_Suc_all xs = T_map $\mathcal{A}\llbracket$Suc$\rrbracket$ $\mathcal{A}\llbracket$xs$\rrbracket$
+  $\equiv$ T_Suc_all xs = T_map (Suc, ($\lambda$x. 0)) $\mathcal{N}\llbracket$xs$\rrbracket$
+  $\equiv$ T_Suc_all xs = T_map (Suc, ($\lambda$x. 0)) xs
+\end{lstlisting}

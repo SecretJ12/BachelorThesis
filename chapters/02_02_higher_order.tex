@@ -4,8 +4,8 @@
 In this chapter, we want to extend the schema for higher-order functions.
 First, we look at the function $\texttt{test}$ in \autoref{lst:ho_test}.
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:ho_test,caption=Example function]
-  fun test :: "(nat => bool) => nat => nat" where
-    "test f a = (if f a then 1 else 0)"
+  fun test :: (nat => bool) => nat => nat where
+    test f a = (if f a then 1 else 0)
 \end{lstlisting}
 Applying the translation $\mathcal{T}$ for first-order functions onto the expression yields us
 \begin{lstlisting}[language=isabelle,mathescape=true]
@@ -17,8 +17,8 @@ As we cannot generate the timing function at runtime, Sands proposes to change e
 The first element is the original function and the second is the timing function.
 Using this idea, we can convert the whole function as shown in \autoref{lst:ho_T_test}.
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:ho_T_test,caption=Timing function of example function]
-  fun T_test :: "('a => bool) $\times$ ('a => nat) => 'a => nat" where
-    "T_test f a = 1 + snd f a + (if fst f a then 1 else 0)"
+  fun T_test :: ('a => bool) $\times$ ('a => nat) => 'a => nat where
+    T_test f a = 1 + snd f a + (if fst f a then 1 else 0)
 \end{lstlisting}
 In general, we need to use $\texttt{snd}$ everywhere the timing function is needed and $\texttt{fst}$ in case of a normal evaluation.
 For every function $\texttt{f}$ he generates two functions $\texttt{f'}$ and $\texttt{cf}$.
@@ -79,11 +79,11 @@ In \autoref{lst:T_map_nipkow}, the translation for the $\texttt{map}$ function i
 It differs from our schema as it only takes the timing function but not the original function.
 This schema works as the original function is not used but cannot be extended to all functions.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Translation of the function map to their timing function by Nipkow,label=lst:T_map_nipkow]
-  fun map :: "('a => 'b) => 'a list => 'b list" where
-    "map f [] = []"
-  | "map f (x # xs) = f x # map f xs"
+  fun map :: ('a => 'b) => 'a list => 'b list where
+    map f [] = []
+  | map f (x # xs) = f x # map f xs
 
-  fun T_map :: "('a => nat) => 'a list => nat" where
-    "T_map f [] = 1"
-  | "T_map f (x # xs) = 1 + (f x + T_map f xs)"
+  fun T_map :: ('a => nat) => 'a list => nat where
+    T_map f [] = 1
+  | T_map f (x # xs) = 1 + (f x + T_map f xs)
 \end{lstlisting}

@@ -53,9 +53,13 @@ Similar to if-else constructs, we avoid too much overapproximation by only count
 To this, we add the running time equivalent of the pattern-matching expression.
 For the let expression, we add the running time version of the assigned expression to the let expression with the translated body.
 If the translated body does not use the assigned variable, we can reduce the construct to the body.
-The schema can be found in \autoref{lst:fds_case_let}.
-\begin{lstlisting}[language=translation,label=lst:fds_case_let,caption=Translation schema for case- and let-expression by Nipkow,mathescape=true]
-  cTb$$case $e$ of $p_{1}$ => $e_{1}$ | $\dots$ | $p_{k}$ => $e_{k}\rrbracket$
-    = cTb$ e\rrbracket$ + (case $e$ of $p_{1}$ => cTb$e_{1} \rrbracket$ | $\dots$ | $p_{k}$ => cTb$e_{k} \rrbracket$)
-  cTb$$let $x$ = $e_{1}$ in $e_{2}\rrbracket$ = cTb$e_{1}\rrbracket$ + (let $x$ = $e_{1}$ in cTb$e_{2} \rrbracket)$
-\end{lstlisting}
+The schema can be found in \autoref{fig:fds_case_let}.
+\begin{figure}
+  \begin{align*}
+    &\mathcal{T}\llbracket \text{case}\ e\ \text{of}\ p_{1}\ \Rightarrow\ e_{1}\ |\ \dots\ |\ p_{k}\ \Rightarrow\ e_{k}\rrbracket\\
+    &\ \ = \mathcal{T}\llbracket e \rrbracket\ +\ (\text{case}\ e\ \text{of}\ p_{1}\ \Rightarrow\ \mathcal{T}\llbracket e_{1}\rrbracket\ |\ \dots\ |\ p_{k}\ \Rightarrow\ \mathcal{T}\llbracket e_{k}\rrbracket)\\
+    &\mathcal{T}\llbracket\text{let}\ x = e_{1}\ \text{in}\ e_{2}\rrbracket = \mathcal{T}\llbracket e_{1}\rrbracket + (\text{let}\ x = e_{1}\ \text{in}\ \mathcal{T}\llbracket e_{2}\rrbracket)
+  \end{align*}
+  \caption{Translation schema for case- and let-expressions by Nipkow}
+  \label{fig:fds_case_let}
+\end{figure}

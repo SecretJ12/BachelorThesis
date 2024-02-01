@@ -8,11 +8,11 @@ The first try equals the command $\texttt{fun}$ as the command name suggests.
 Both use the tactic $\texttt{lexicographic\_order}$ in order to prove termination.
 We now look at the following function $\texttt{sum}$, where this tactic fails.
 \begin{lstlisting}[language=isabelle,mathescape=true]
-  function sum :: "nat => nat => nat" where
-    "sum i j = (if j $\le$ i then 0 else i + sum (Suc i) j)"
+  function sum :: nat => nat => nat where
+    sum i j = (if j $\le$ i then 0 else i + sum (Suc i) j)
     by pat_completeness auto
   termination
-    by (relation "measure ($\lambda$(i,j). j - i)") auto
+    by (relation measure ($\lambda$(i,j). j - i)) auto
 \end{lstlisting}
 
 Termination needs to be proved manually.
@@ -21,8 +21,8 @@ However, as we have already proved termination for this function, we can use it 
 The second strategy does this and tries to cover all functions.
 In the first step, we register the timing function equivalent to using the $\texttt{function}$ command.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Function registration,label=lst:sum_reg]
-  function (domintros) T_sum :: "nat => nat => nat" where
-    "T_sum i j = 1 + (if j $\le$ i then 0 else T_sum (Suc i) j)"
+  function (domintros) T_sum :: nat => nat => nat where
+    T_sum i j = 1 + (if j $\le$ i then 0 else T_sum (Suc i) j)
     by pat_completeness auto
 \end{lstlisting}
 In Isabelle, every function needs to terminate.
@@ -78,7 +78,7 @@ In order to support as many cases as possible, we use metis as an advanced prove
 With the just-proven goal, the auto tactic can now prove termination.
 The whole proof can be found in \autoref{lst:proof_schema}.
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:proof_schema,caption=Proof schema over dom with help of original function]
-  lemma T_sum_dom: "T_sum_dom (i,j)"
+  lemma T_sum_dom: T_sum_dom (i,j)
     apply (induction i j rule: sum.induct)
     apply (metis T_sum.domintros)
     done

@@ -9,8 +9,8 @@ This third argument is called the arity.
 He explains the schema by demonstrating it on a default apply function first.
 The apply function $\texttt{app}$ is shown in \autoref{lst:curried_app}.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Apply function,label=lst:curried_app]
-  fun app :: "('a => 'b) => 'a => 'b" where
-    "app f a = f a"
+  fun app :: ('a => 'b) => 'a => 'b where
+    app f a = f a
 \end{lstlisting}
 
 He also starts by defining the function $\texttt{app'}$.
@@ -22,9 +22,9 @@ Therefore, we construct a new tuple with the argument applied to both functions 
 The full function is described in \autoref{lst:curried_app'}.
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_app',caption=Apply function on function argument triple]
   fun app' where
-    "app' f x = (if arity f = 1
+    app' f x = (if arity f = 1
         then (func f x)
-        else (func f x, cost f x, arity f - 1))"
+        else (func f x, cost f x, arity f - 1))
 \end{lstlisting}
 
 Afterward, he defines the function $\texttt{capp}$.
@@ -34,7 +34,7 @@ If the arity is $1$, then the cost function is evaluated.
 This gives the function definition shown in \autoref{lst:curried_capp}.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Timing function of apply function,label=lst:curried_capp]
   fun capp where
-    "capp f x = (if arity f = 1 then cost f x else 0)"
+    capp f x = (if arity f = 1 then cost f x else 0)
 \end{lstlisting}
 
 Similar to the translation of the higher-order function, he defines two conversion functions $\mathcal{V}$ and $\mathcal{T}$ with similar behavior.
@@ -59,18 +59,18 @@ For example, we can see the transformation of the map function in listing \ref{l
 
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_map_example,caption=Example translation for map function]
 fun map where
-  "map f [] = []"
-| "map f (x#xs) = f x # map f xs"
+  map f [] = []
+| map f (x#xs) = f x # map f xs
 
 fun map' where
-  "map' f [] = []"
-| "map' f (x#xs) = (Cons,T_Cons,2) @ (f @ x) @ ((map',T_map,2) @ f @ xs)"
+  map' f [] = []
+| map' f (x#xs) = (Cons,T_Cons,2) @ (f @ x) @ ((map',T_map,2) @ f @ xs)
 
 fun T_map where
-  "T_map f [] = 1"
-| "T_map f (x#xs) = 1 + f c@ x +
+  T_map f [] = 1
+| T_map f (x#xs) = 1 + f c@ x +
     (map',T_map,2) c@ f + (map',T_map,2) @ f c@ xs +
-    (Cons,T_Cons,2) @ (f @ x) c@ ((map',T_map,2) @ f @ xs)"
+    (Cons,T_Cons,2) @ (f @ x) c@ ((map',T_map,2) @ f @ xs)
 \end{lstlisting}
 
 As we can see, this already blows up for a small function as $\texttt{map}$.
@@ -84,6 +84,6 @@ As a result, we gain a timing function similar to our previous schema.
 The apply function will only be used for passed functions now.
 \begin{lstlisting}[language=isabelle,mathescape=true]
 function T_map where
-  "T_map f [] = 1"
-| "T_map f (x#xs) = 1 + f c@ x + T_map f xs"
+  T_map f [] = 1
+| T_map f (x#xs) = 1 + f c@ x + T_map f xs
 \end{lstlisting}

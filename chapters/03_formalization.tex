@@ -19,15 +19,15 @@ Based on this, we define the constructors for our datatype.
 The $\texttt{V}$ constructor maps the arbitrary type and the $\texttt{N}$ constructor wraps the natural numbers we will use for counting.
 Therefore it fulfills our requirements.
 \begin{lstlisting}[language=isabelle]
-typedecl "value"
-datatype val = N nat | V "value"
+typedecl value
+datatype val = N nat | V value
 \end{lstlisting}
 
 For if-else constructs, we need a boolean interpretation of our datatype.
 We define the natural number type with 0 as false and everything else as true.
 \begin{lstlisting}[mathescape=true,language=isabelle]
-definition false :: "val => bool" where "false v $\equiv$ v = N 0"
-definition true :: "val => bool" where "true v $\equiv$ $\neg$ false v"
+definition false :: val => bool where false v $\equiv$ v = N 0
+definition true :: val => bool where true v $\equiv$ $\neg$ false v
 \end{lstlisting}
 
 As explained in the last chapter, we differ between primitive and non-primitive functions.
@@ -49,9 +49,9 @@ For better readability, we introduce \$ for function applications and \$\$ for p
 The whole datatype can be found in \autoref{lst:exp}.
 \begin{lstlisting}[label=lst:exp,caption=Expression syntax,float,language=isabelle,escapeinside={@}{@}]
 datatype exp =
-  App funId "exp list"        (infix "@\$@" 100)
-| pApp pfunId "exp list"      (infix "@\$\$@" 100)
-| If exp exp exp              ("(IF _/ THEN _/ ELSE _)")
+  App funId exp list        (infix @\$@ 100)
+| pApp pfunId exp list      (infix @\$\$@ 100)
+| If exp exp exp              (IF _/ THEN _/ ELSE _)
 | Ident nat
 | Const val
 \end{lstlisting}
@@ -60,7 +60,7 @@ The datatype storing all registered functions is called $\texttt{defs}$.
 It is a simple function mapping a function id to an expression wrapped by an option.
 The option is again to deal with possible namespace collisions later.
 \begin{lstlisting}[mathescape=true,language=isabelle]
-type_synonym defs = "funId => exp option"
+type_synonym defs = funId => exp option
 \end{lstlisting}
 
 For primitive functions, there is no mapper but a direct primitive application function.
@@ -71,8 +71,8 @@ All the arguments need to be of the defined number type.
 We can assume this function to be constant, although it takes an arbitrary amount of arguments.
 This choice is justified as the number of arguments is fixed in every expression.
 \begin{lstlisting}[mathescape=true,language=isabelle]
-axiomatization pApp :: "string => val list => val" where
-  sum: "pApp ''sum'' es = (N o sum_list o map val_to_nat) es"
+axiomatization pApp :: string => val list => val where
+  sum: pApp ''sum'' es = (N o sum_list o map val_to_nat) es
 \end{lstlisting}
 
 Inside a function, the passed arguments will be available as local variables.
@@ -80,7 +80,7 @@ Those local variables are contained in the environment, represented by a list of
 We can refer to a value inside an expression through $\texttt{Ident}$.
 The selected number represents the index of the environment list.
 \begin{lstlisting}[language=isabelle]
-type_synonym env = "val list"
+type_synonym env = val list
 \end{lstlisting}
 
 The evaluation semantic of the form
@@ -89,21 +89,21 @@ The evaluation semantic of the form
 \end{equation*}
 can be read as \textit{The expression $\text{e}$ evaluates under the local variables $\rho$ and the definitions $\phi$ to the value $\text{v}$}. The corresponding semantic is given in \autoref{lst:eval}.
 \begin{lstlisting}[float,label=lst:eval,caption=Default evaluation semantic,mathescape=true,escapeinside={@}{@},language=isabelle]
-inductive eval :: "env => defs => exp => val => bool"
+inductive eval :: env => defs => exp => val => bool
   ("(_/, _/ |-_/ -> _)") where
-Id:   "$\rho$, $\phi$ |- Ident i -> ($\rho$ ! i)" |
-C:    "$\rho$, $\phi$ |- Const v -> v" |
-F:    "length es = length vs
+Id:   $\rho$, $\phi$ |- Ident i -> ($\rho$ ! i) |
+C:    $\rho$, $\phi$ |- Const v -> v |
+F:    length es = length vs
   ==> ($\forall$i < length vs. $\rho$, $\phi$ |- (es ! i) -> (vs ! i))
   ==> $\phi$ f = Some fe ==> vs, $\phi$ |- fe -> v
-  ==> $\rho$, $\phi$ |- (f@\$@ es) -> v" |
-P:    "length es = length vs
+  ==> $\rho$, $\phi$ |- (f@\$@ es) -> v |
+P:    length es = length vs
   ==> ($\forall$i < length es. $\rho$, $\phi$ |- (es ! i) -> (vs ! i))
-  ==> pApp p vs = v ==> $\rho$, $\phi$ |- (pFun p@\$\$@ es) -> v" |
-If1:  "$\rho$, $\phi$ |- b -> v ==> true v
-  ==> $\rho$, $\phi$ |- t -> et ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> et" |
-If2:  "$\rho$, $\phi$ |- b -> v ==> false v
-  ==> $\rho$, $\phi$ |- f -> ef ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> ef"
+  ==> pApp p vs = v ==> $\rho$, $\phi$ |- (pFun p@\$\$@ es) -> v |
+If1:  $\rho$, $\phi$ |- b -> v ==> true v
+  ==> $\rho$, $\phi$ |- t -> et ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> et |
+If2:  $\rho$, $\phi$ |- b -> v ==> false v
+  ==> $\rho$, $\phi$ |- f -> ef ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) -> ef
 \end{lstlisting}
 
 For the eval semantic, we can show determinism stated by
@@ -119,39 +119,39 @@ In the next step, we define a step-counting semantic of the form
 
 which is read as \textit{The expression $\text{e}$ evaluates under the given local variables $\rho$ and the definitions $\phi$ to the value $\text{v}$ involving t non-primitive function applications}. The corresponding semantic is given in \autoref{lst:stepeval}.
 \begin{lstlisting}[float,label=lst:stepeval,caption=Step-Counting Semantic,mathescape=true,escapeinside={@}{@},language=isabelle]
-inductive eval_count :: "env => defs => exp => val * nat => bool"
-  ("(_/, _/ |- _/ ->s _)") where
-cId:   "$\rho$, $\phi$ |- Ident i ->s ($\rho$!i,0)" |
-cC:    "$\rho$, $\phi$ |- Const v ->s (v,0)" |
-cF:    "length es = length vs ==> length es = length ts
+inductive eval_count :: env => defs => exp => val * nat => bool
+  (_/, _/ |- _/ ->s _) where
+cId:   $\rho$, $\phi$ |- Ident i ->s ($\rho$!i,0) |
+cC:    $\rho$, $\phi$ |- Const v ->s (v,0) |
+cF:    length es = length vs ==> length es = length ts
   ==> ($\forall$ i < length vs. $\rho$, $\phi$ |- (es!i) ->s (vs!i,ts!i))
   ==> $\phi$ f = Some fe ==> vs, $\phi$ |- fe ->s (v,t)
-  ==> $\rho$, $\phi$ |- (f@\$@ es) ->s (v,1+t+sum_list ts)" |
-cP:    "length es = length vs ==> length es = length ts
+  ==> $\rho$, $\phi$ |- (f@\$@ es) ->s (v,1+t+sum_list ts) |
+cP:    length es = length vs ==> length es = length ts
   ==> ($\forall$i < length es. $\rho$, $\phi$ |- (es ! i) ->s (vs!i,ts!i))
-  ==> pApp p vs = v ==> $\rho$, $\phi$ |- (pFun p@\$\$@ es) ->s (v,sum_list ts)" |
-cIf1:  "$\rho$, $\phi$ |- b ->s (eb,tb) ==> true eb ==> $\rho$, $\phi$ |- t ->s (et,tt)
-  ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) ->s (et,tb+tt)" |
-cIf2:  "$\rho$, $\phi$ |- b ->s (eb,tb) ==> false eb ==> $\rho$, $\phi$ |- f ->s (ef,tf)
-  ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) ->s (ef,tb+tf)"
+  ==> pApp p vs = v ==> $\rho$, $\phi$ |- (pFun p@\$\$@ es) ->s (v,sum_list ts) |
+cIf1:  $\rho$, $\phi$ |- b ->s (eb,tb) ==> true eb ==> $\rho$, $\phi$ |- t ->s (et,tt)
+  ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) ->s (et,tb+tt) |
+cIf2:  $\rho$, $\phi$ |- b ->s (eb,tb) ==> false eb ==> $\rho$, $\phi$ |- f ->s (ef,tf)
+  ==> $\rho$, $\phi$ |- (IF b THEN t ELSE f) ->s (ef,tb+tf)
 \end{lstlisting}
 
 We now want to show the equivalence of the semantics according to the resulting value.
 Showing the implication from the step-counting semantic to the normal semantic can be done by induction over the induction schema of the step-counting semantic.
 The auto tactic can handle all cases.
 \begin{lstlisting}[language=isabelle,mathescape=true]
-  lemma eval_count_eval: "$\rho$, $\phi$ |- b ->s (v,t) ==> $\rho$, $\phi$ |- b -> v"
-  by (induction $\rho$ $\phi$ b "(v,t)" arbitrary: v t rule: eval_count.induct) auto
+  lemma eval_count_eval: $\rho$, $\phi$ |- b ->s (v,t) ==> $\rho$, $\phi$ |- b -> v
+  by (induction $\rho$ $\phi$ b (v,t) arbitrary: v t rule: eval_count.induct) auto
 \end{lstlisting}
 
 For the other direction, we need a lengthy auxiliary lemmo to deal with the arguments of function applications.
 It states the following:
 \begin{lstlisting}[language=isabelle,escapeinside={@}{@},mathescape=true]
 lemma eval_eval_count':
-  assumes tex: "$\forall$i < length vs. $\exists$t. $\rho$, $\phi$ |- es ! i ->s (vs ! i, t)"
-    and $\text{   }$@ @len: "length es = length vs"
-   shows  @ @"$\exists$ts. length vs = length ts
-             $\land$ ($\forall$i. (i < length vs $\longrightarrow$ $\rho$, $\phi$ |- (es!i) ->s (vs!i,ts!i)))"
+  assumes tex: $\forall$i < length vs. $\exists$t. $\rho$, $\phi$ |- es ! i ->s (vs ! i, t)
+    and $\text{   }$@ @len: length es = length vs
+   shows  @ @$\exists$ts. length vs = length ts
+             $\land$ ($\forall$i. (i < length vs $\longrightarrow$ $\rho$, $\phi$ |- (es!i) ->s (vs!i,ts!i)))
 \end{lstlisting}
 
 The lemma is shown as an induction over the length of $\texttt{vs}$ with arbitrary es using the assumptions.
@@ -173,13 +173,13 @@ Therefore, we neglect this proof.
 We can now define the main function, which converts an expression to its cost function.
 The used schema corresponds to the one presented in \autoref{chapter:first_order}.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@},caption=Translation function for expressions]
-fun $\mathcal{T}$ :: "exp => exp" where
-  "$\mathcal{T}$ (Const v) = Const (N 0)"
-| "$\mathcal{T}$ (Ident i) = Const (N 0)"
-| "$\mathcal{T}$ (IF b THEN t ELSE f)
-   = pFun ''sum''@\$\$@ [$\mathcal{T}$ b, IF b THEN $\mathcal{T}$ t ELSE $\mathcal{T}$ f]"
-| "$\mathcal{T}$ (pFun @\_\$\$@ args) = pFun ''sum''@\$\$@ map $\mathcal{T}$ args"
-| "$\mathcal{T}$ (Fun f@\$@ args) = pFun ''sum''@\$\$@ (cFun f@\$@ args @\#@ map $\mathcal{T}$ args)"
+fun $\mathcal{T}$ :: exp => exp where
+  $\mathcal{T}$ (Const v) = Const (N 0)
+| $\mathcal{T}$ (Ident i) = Const (N 0)
+| $\mathcal{T}$ (IF b THEN t ELSE f)
+   = pFun ''sum''@\$\$@ [$\mathcal{T}$ b, IF b THEN $\mathcal{T}$ t ELSE $\mathcal{T}$ f]
+| $\mathcal{T}$ (pFun @\_\$\$@ args) = pFun ''sum''@\$\$@ map $\mathcal{T}$ args
+| $\mathcal{T}$ (Fun f@\$@ args) = pFun ''sum''@\$\$@ (cFun f@\$@ args @\#@ map $\mathcal{T}$ args)
 \end{lstlisting}
 
 Now, we add a definition to convert a function expression.
@@ -188,20 +188,19 @@ We also define the function $\texttt{conv}$ based on this function.
 It alters a definition and registers the cost function for each defined function.
 Already defined cost functions will be dropped.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
-definition cost :: "exp => exp" where
-  "cost e = pFun ''sum''$$ [Const (N 1), $\mathcal{T}$ e]"
+definition cost :: exp => exp where
+  cost e = pFun ''sum''$$ [Const (N 1), $\mathcal{T}$ e]
 
-fun conv :: "defs => defs" where
-  "conv $\phi$ (Fun f) = $\phi$ (Fun f)"
-| "conv $\phi$ (cFun f) = (case $\phi$ (Fun f) of None => None
-                                           | Some e => Some (cost e))"
+fun conv :: defs => defs where
+  conv $\phi$ (Fun f) = $\phi$ (Fun f)
+| conv $\phi$ (cFun f) = (case $\phi$ (Fun f) of None => None
+                                           | Some e => Some (cost e))
 \end{lstlisting}
 
 For the final correctness theorem, we need a property that tells us whether a definition contains any timing function.
 This allows us to avoid dropping already referenced timing functions with the conv function.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
-definition no_time where
-  "no_time $\phi$ = ($\forall$f. $\phi$ (cFun f) = None)"
+definition no_time $\phi$ $\equiv$ ($\forall$f. $\phi$ (cFun f) = None)
 \end{lstlisting}
 
 In order to better deal with this property, we define another auxiliary lemma.
@@ -209,10 +208,10 @@ It states that if there is no timing function, then the evaluation result does n
 The lemma is proved over induction with a helping lemma claiming conv does not change defined functions.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 lemma no_time_trans:
-  "no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e"
+  no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e
   by (cases f) (auto simp: no_time_def)
 lemma eval_no_time_trans:
-  "$\rho$, $\phi$ |- e -> v ==> no_time $\phi$ ==> $\rho$, (conv $\phi$) |- e -> v"
+  $\rho$, $\phi$ |- e -> v ==> no_time $\phi$ ==> $\rho$, (conv $\phi$) |- e -> v
   by (induction rule: eval.induct) (auto simp: no_time_trans)
 \end{lstlisting}
 
@@ -221,9 +220,9 @@ Given an expression and a definition without a timing function.
 If an evaluation of the step-counting semantics results in $\texttt{t}$, then the evaluation of the converted expression and function definitions results in the same value $\texttt{t}$.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@},keepspaces=true]
 theorem conv_cor:
-  assumes "$\rho$, $\phi$ |-e ->s(s,t)"
-    and   "no_time $\phi$"
-   shows  "$\rho$, (conv $\phi$) |-($\mathcal{T}$ e) ->N t"
+  assumes $\rho$, $\phi$ |-e ->s(s,t)
+    and   no_time $\phi$
+   shows  $\rho$, (conv $\phi$) |-($\mathcal{T}$ e) ->N t
 \end{lstlisting}
 
 The theorem is proved by induction over the step-counting semantic.

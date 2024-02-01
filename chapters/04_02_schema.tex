@@ -28,10 +28,11 @@ As we do not support curried functions, those expressions cannot evaluate to a f
 The definition for $\mathcal{A}$ is described in \autoref{fig:schema_A}.
 \begin{figure}
 \begin{align*}
-  \mathcal{N}\llbracket f\rrbracket &= (\texttt{fun}\ f) &&\text{| passed function}\\
-  \mathcal{N}\llbracket e_{1}\ \$\ e_{n}\rrbracket &= \mathcal{N}\llbracket e_{1}\rrbracket\ \$\ \mathcal{N}\llbracket e_{2}\rrbracket &&\text{| other expressions}
+  \mathcal{N}\llbracket e_{1}\ e_{2}\rrbracket &= \mathcal{N}\llbracket e_{1}\rrbracket\ \mathcal{N}\llbracket e_{2}\rrbracket &&\text{| function application}\\
+  \mathcal{N}\llbracket f\rrbracket &= (\texttt{fst}\ f) &&\text{| passed function}\\
+  \mathcal{N}\llbracket c\rrbracket &= c &&\text{| constants / variables}
 \end{align*}
-\caption{Handling function application for normal evaluation}
+\caption{Convert equation for normal evaluation}
 \label{fig:schema_N}
 \end{figure}
 

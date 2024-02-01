@@ -31,7 +31,7 @@ The function is an abbreviation of the size operator, which is automatically cre
 Converting it directly will create problems.
 Instead, we can use size equations created for the list datatype.
 Specifying them in the command will give us the desired result.
-\Listingref{lst:restr_length} shows the full command.
+\autoref{lst:restr_length} shows the full command.
 \begin{lstlisting}[language=isabelle,float,label=lst:restr_length,caption=Converting the length function correctly]
   define_time_fun length equations list.size(3) list.size(4)
 \end{lstlisting}

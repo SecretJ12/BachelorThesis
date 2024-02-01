@@ -74,7 +74,7 @@ This happens in the cases of $\texttt{if-else}$, $\texttt{case}$ and $\texttt{le
   &\mathcal{T}\llbracket c\rrbracket &&= 0\\
   &\mathcal{T}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &&= \mathcal{F}\llbracket T\_f\ a_{1}\ \dots\ a_{n}\rrbracket + \mathcal{T}\llbracket a_{1}\rrbracket + \dots + \mathcal{T}\llbracket a_{n}\rrbracket\\
   &\mathcal{T}\llbracket \text{if}\ c\ \text{then}\ et\ \text{else}\ ef\rrbracket &&= \mathcal{T}\llbracket c\rrbracket + (\text{if}\ \mathcal{N}\llbracket c\rrbracket\ \text{then}\ \mathcal{T}\llbracket et\rrbracket\ \text{else}\ \mathcal{T}\llbracket ef\rrbracket)\\
-  &\mathcal{T}\llbracket \text{case}\ e\ \text{of}\ c_{1} \Rightarrow e_{1}\ |\ \dots\ |\ c_{n}\Rightarrow e_{n}\rrbracket &&= \mathcal{T}\llbracket c\rrbracket + \\
+  &\mathcal{T}\llbracket \text{case}\ e\ \text{of}\ c_{1} \Rightarrow e_{1}\ |\ \dots\ |\ c_{n}\Rightarrow e_{n}\rrbracket &&= \mathcal{T}\llbracket e\rrbracket + \\
   & &&\ \ \ \ \ (\text{case}\ \mathcal{N}\llbracket e\rrbracket\ \text{of}\ c_{1}\Rightarrow\mathcal{T}\llbracket e_{1}\rrbracket\ |\ \dots\ |\ c_{n} \Rightarrow \mathcal{T}\llbracket e_{n}\rrbracket)\\
   &\mathcal{T}\llbracket \text{let}\ x = e_{1}\ \text{in}\ e_{2}\rrbracket &&= \mathcal{T}\llbracket e_{1}\rrbracket + (\text{let}\ x = \mathcal{N}\llbracket e_{1}\rrbracket\ \text{in}\ \mathcal{T}\llbracket e_{2}\rrbracket)
 \end{align*}

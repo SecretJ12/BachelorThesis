@@ -6,7 +6,7 @@ The implementation provides three commands.
 The main one is $\texttt{define\_time\_fun}$.
 It accepts the name of a function as argument, converts it and registers its running time function.
 Additionally it tries to proof the termination automatically.
-Details on this proof can be found in section \ref{chapter:termination}.
+Details on this proof can be found in \autoref{chapter:termination}.
 
 Although the termination proof should work automatically for most functions there are still edge cases, where it takes up too much time or even fails.
 Therefore the command $\texttt{define\_time\_function}$ exists.
@@ -16,15 +16,15 @@ Afterwards the user needs to prove termination manually using the command $\text
 In order to convert mutual recursive functions, the name of all the related functions need to be provided.
 This cannot be used to convert multiple not related functions at once.
 Sometimes we also want to specify the used function equations explicitely.
-This can be helpful for some cases as explained in \ref{chapter:nonconstant_zeros}.
+This can be helpful for some cases as explained in \autoref{chapter:nonconstant_zeros}.
 To add the equations one needs to use the keyword $\texttt{equations}$ followed by the wanted equations.
-The full command schema can be found in listing \ref{lst:cmds}.
+The full command schema can be found in \autoref{lst:cmds}.
 
-The translation schema converts functions marked as zero differently, see section \ref{chapter:impl_schema}.
+The translation schema converts functions marked as zero differently, see \autoref{chapter:impl_schema}.
 With the command $\texttt{define\_time\_0}$ more functions can me marked as zero.
 This should be used with care and only for functions with a constant running time.
-Section \ref{chapter:nonconstant_zeros} includes a discussion on that.
-In listing \ref{lst:primitive} all default zero functions can be found.
+\Sectionref{chapter:nonconstant_zeros} includes a discussion on that.
+In \autoref{lst:primitive} all default zero functions can be found.
 
 \begin{lstlisting}[float,label=lst:cmds,caption=Schema of implemented command]
   define_time_fun {NameOfFunction}+ [equations {thm}+]

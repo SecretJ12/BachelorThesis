@@ -19,13 +19,13 @@ Constants (c) are translated as $0$ because we are only interested in the time c
 In If-Else constructs, it would be possible to add up all the used terms,
 but this would lead to a big overapproximation.
 To get a better result, we only add up the cost for the condition, which is always evaluated, with the cost for the relevant branch.
-The translation function is named $\mathcal{T}$ and is described in figure \ref{fig:first_order_T}.
+The translation function is named $\mathcal{T}$ and is described in \autoref{fig:first_order_T}.
 
 When converting a function definition, we start with $1$ for the function call itself.
 Afterward, the expression converted by $\mathcal{T}$ is added.
-The conversion function is named $\mathcal{C}$ and is described in figure \ref{fig:first_order_C}.
+The conversion function is named $\mathcal{C}$ and is described in \autoref{fig:first_order_C}.
 Sands also provides a proof for this schema.
-Chapter \ref{chapter:formal} presents a formalization of the proof in Isabelle.
+\Chapterref{chapter:formal} presents a formalization of the proof in Isabelle.
 
 \begin{figure}
   \begin{align*}
@@ -53,7 +53,7 @@ Similar to if-else constructs, we avoid too much overapproximation by only count
 To this, we add the running time equivalent of the pattern-matching expression.
 For the let expression, we add the running time version of the assigned expression to the let expression with the translated body.
 If the translated body does not use the assigned variable, we can reduce the construct to the body.
-The schema can be found in listing \ref{lst:fds_case_let}.
+The schema can be found in \autoref{lst:fds_case_let}.
 \begin{lstlisting}[language=translation,label=lst:fds_case_let,caption=Translation schema for case- and let-expression by Nipkow,mathescape=true]
   cTb$$case $e$ of $p_{1}$ => $e_{1}$ | $\dots$ | $p_{k}$ => $e_{k}\rrbracket$
     = cTb$ e\rrbracket$ + (case $e$ of $p_{1}$ => cTb$e_{1} \rrbracket$ | $\dots$ | $p_{k}$ => cTb$e_{k} \rrbracket$)

@@ -95,6 +95,17 @@
 
 \begin{document}
 
+\renewcommand{\chapterautorefname}{chapter}
+\renewcommand{\figureautorefname}{figure}
+\newcommand{\lstlistingautorefname}{listing}
+\renewcommand{\sectionautorefname}{section}
+\renewcommand{\subsectionautorefname}{section}
+\newcommand{\Chapterref}[1]{\hyperref[#1]{Chapter~\ref*{#1}}}
+\newcommand{\Figureref}[1]{\hyperref[#1]{Figure~\ref*{#1}}}
+\newcommand{\Sectionref}[1]{\hyperref[#1]{Section~\ref*{#1}}}
+\newcommand{\Listingref}[1]{\hyperref[#1]{Listing~\ref*{#1}}}
+
+
 % Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
 % (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
 \pagenumbering{alph}

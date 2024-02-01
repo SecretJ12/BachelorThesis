@@ -7,7 +7,7 @@ The key point of this schema is the extension of the pair used for higher-order 
 The third argument represents the number of arguments left to apply till full application.
 This third argument is called the arity.
 He explains the schema by demonstrating it on a default apply function first.
-The apply function $\texttt{app}$ is shown in listing \ref{lst:curried_app}.
+The apply function $\texttt{app}$ is shown in \autoref{lst:curried_app}.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Apply function,label=lst:curried_app]
   fun app :: "('a => 'b) => 'a => 'b" where
     "app f a = f a"
@@ -19,7 +19,7 @@ If the arity equals $1$, then the curried function expects only one more argumen
 Then, the first element of the tuple representing the original function is evaluated.
 If the arity is bigger than 1, the curried function will evaluate to another function.
 Therefore, we construct a new tuple with the argument applied to both functions and the arity decreased by $1$.
-The full function is described in listing \ref{lst:curried_app'}.
+The full function is described in \autoref{lst:curried_app'}.
 \begin{lstlisting}[language=isabelle,mathescape=true,label=lst:curried_app',caption=Apply function on function argument triple]
   fun app' where
     "app' f x = (if arity f = 1
@@ -31,7 +31,7 @@ Afterward, he defines the function $\texttt{capp}$.
 It should yield the cost of the passed function with one argument applied.
 As the application is free if the function is not fully applied, it yields $0$ if the arity is greater than $1$.
 If the arity is $1$, then the cost function is evaluated.
-This gives the function definition shown in listing \ref{lst:curried_capp}.
+This gives the function definition shown in \autoref{lst:curried_capp}.
 \begin{lstlisting}[language=isabelle,mathescape=true,caption=Timing function of apply function,label=lst:curried_capp]
   fun capp where
     "capp f x = (if arity f = 1 then cost f x else 0)"
@@ -41,12 +41,12 @@ Similar to the translation of the higher-order function, he defines two conversi
 $\mathcal{V}$ converts the function to evaluate as the original function but accepts the described triples instead of functions.
 Every referenced function will be replaced by the described triple.
 Function applications are replaced by passing function and argument to the $\texttt{app'}$ function.
-All the other definitions stay the same as described in \ref{fig:higher_V}.
-The function $\mathcal{T}$ also stays the same as in \ref{fig:higher_T} except for the application case.
+All the other definitions stay the same as described in \autoref{fig:higher_V}.
+The function $\mathcal{T}$ also stays the same as in \autoref{fig:higher_T} except for the application case.
 For every application currently handled by the $\texttt{app'}$ function, the function and the argument will be converted and added up.
 Additionally, we need the cost of the application itself.
 This cost is determined by passing the function and the argument to the function $\texttt{capp}$.
-Figure \ref{fig:curried_T_apply} shows this case.
+\Figureref{fig:curried_T_apply} shows this case.
 For better readability, the infix symbol $@$ represents the function $\texttt{app'}$ while $c@$ stands for the function $\texttt{capp}$.
 For example, we can see the transformation of the map function in listing \ref{lst:curried_map_example}.
 \begin{figure}

@@ -31,17 +31,17 @@ The function is an abbreviation of the size operator, which is automatically cre
 Converting it directly will create problems.
 Instead, we can use size equations created for the list datatype.
 Specifying them in the command will give us the desired result.
-Listing \ref{lst:restr_length} shows the full command.
+\Listingref{lst:restr_length} shows the full command.
 \begin{lstlisting}[language=isabelle,float,label=lst:restr_length,caption=Converting the length function correctly]
   define_time_fun length equations list.size(3) list.size(4)
 \end{lstlisting}
 
 \subsection{Partial application}
-As described in chapter \ref{chapter:rel_curried}, Sands also proposes a translation schema for curried functions.
+As described in \autoref{chapter:rel_curried}, Sands also proposes a translation schema for curried functions.
 This schema cannot be used here as Isabelle uses a strict type system.
-Trying to define Sands' $\texttt{app'}$ function as defined in listing \ref{lst:curried_app'} will fail in Isabelle.
+Trying to define Sands' $\texttt{app'}$ function as defined in \autoref{lst:curried_app'} will fail in Isabelle.
 This is the case because, inside the then branch, the outcome of the func part is returned, while the else branch returns a triple.
-However, the function $\texttt{capp}$ defined in listing \ref{lst:curried_capp} can be registered.
+However, the function $\texttt{capp}$ defined in \autoref{lst:curried_capp} can be registered.
 However, as the arity counter is not coupled to the timing function itself, the timing function always needs to be of the form $\texttt{'a $\Rightarrow$ nat}$.
 This type is not a wanted behavior, as we also want to evaluate the cost of a function with more than one argument left.
 

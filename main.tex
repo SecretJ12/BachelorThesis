@@ -43,7 +43,7 @@
 \definecolor{pink}{HTML}{f30dc5}
 \definecolor{purple}{HTML}{9966ff}
 \lstdefinelanguage{isabelle}{
-    keywords=[1]{type_synonym,datatype,fun,function,termination,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive,by,define_time_fun},
+    keywords=[1]{type_synonym,datatype,fun,function,termination,abbreviation,definition,proof,lemma,theorem,corollary,typedecl,axiomatization,inductive,by,define_time_fun,define_time_0,define_time_function},
     keywordstyle=[1]\bfseries\color{isarblue},
     keywords=[2]{where,assumes,shows,and,equations},
     keywordstyle=[2]\bfseries\color{isargreen},
@@ -53,11 +53,11 @@
 	  {->}{{\textcolor{parsedblue}{$\rightarrow$ }}}{2}
 	  {->s}{{\textcolor{parsedblue}{$\rightarrow$s }}}{3}
 	  {|-}{{\textcolor{parsedblue}{$\vdash$ }}}{2}
-	  {=>}{{\textcolor{parsedblue}{$\Rightarrow$ }}}{2}
+	  {=>}{$\Rightarrow$ }{2}
 	  {==>}{$\Longrightarrow$ }{3},
     keywords=[4]{IF,THEN,ELSE},
     keywordstyle=[4]\color{parsedblue},
-    keywords=[5]{apply,done},
+    keywords=[5]{apply,done,sorry},
     keywordstyle=[5]\color{proofred},
     keywords=[6]{rule,simp},
     keywordstyle=[6]\color{purple},
@@ -75,7 +75,7 @@
 	  {->}{{\textcolor{parsedblue}{$\rightarrow$ }}}{2}
 	  {->s}{{\textcolor{parsedblue}{$\rightarrow$s }}}{3}
 	  {|-}{{\textcolor{parsedblue}{$\vdash$ }}}{2}
-	  {=>}{{\textcolor{parsedblue}{$\Rightarrow$}}}{2}
+	  {=>}{$\Rightarrow$}{2}
 	  {==>}{$\Longrightarrow$ }{3}
     {cTb}{\textcolor{isargreen}{$\mathcal{T}$}$\llbracket$}{3}
     {cFb}{\textcolor{isargreen}{$\mathcal{F}$}$\llbracket$}{3}

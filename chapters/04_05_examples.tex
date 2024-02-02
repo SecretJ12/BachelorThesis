@@ -1,0 +1,97 @@
+
+\section{Examples}
+This chapter presents the translation of some interesting functions.
+Every listing first contains the original function, followed by the conversion command and the resulting timing function.
+The function $\texttt{dummy}$ represents an arbitrary function.
+We use it in some examples to show more interesting edge cases.
+
+The first example shows that a $\texttt{if-else}$ expression is dropped if both cases are free of cost.
+Only the converted condition is left.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+fun bool_to_nat :: bool => nat where
+  bool_to_nat b = (if dummy b then 1 else 0)
+define_time_fun bool_to_nat
+
+fun T_bool_to_nat :: bool => nat where
+  T_bool_to_nat b = T_dummy b
+\end{lstlisting}
+
+The same happens if we define the same function with a case construct.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+fun bool_to_nat_case :: bool => nat where
+  bool_to_nat_case b = (case dummy b of True => 1 | False => 0)
+define_time_fun bool_to_nat_case
+
+fun T_bool_to_nat_case :: bool => nat where
+    T_bool_to_nat_case b = T_dummy b
+\end{lstlisting}
+
+A similar optimization happens for let expressions.
+In the following example, the converted function no longer uses the assigned variable of the inner $\texttt{let}$ expression.
+Therefore, we reduce the expression to the body.
+The outer $\texttt{let}$ is converted as expected.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+fun let_add :: int => int => int where
+  let_add x y = (let b = dummy y; a = dummy x in a + dummy b)
+define_time_fun let_add
+
+fun T_let_add :: int => int => nat where
+  T_let_add x y = T_dummy y + (let b = dummy y in T_dummy x + T_dummy b)
+\end{lstlisting}
+
+If we want to convert a mutually recursive function, we need to provide the names of all related functions as specified in \autoref{chapter:commands}.
+All functions will be translated as recursive.
+\begin{lstlisting}[language=isabelle,mathescape=true]
+fun even :: nat => bool
+  and odd :: nat => bool where
+  even 0 = True
+| odd 0 = False
+| even (Suc n) = odd n
+| odd (Suc n) = even n
+define_time_fun even odd
+
+fun T_even_T_odd :: nat => nat where
+  T_even 0 = 1
+| T_odd 0 = 1
+| T_even (Suc n) = 1 + T_odd n
+| T_odd (Suc n) = 1 + T_even n
+\end{lstlisting}
+
+The next example shows how powerful the termination proof is.
+First, we define the function calculating the collatz number.
+Sadly, we cannot prove the termination of this function, but we can assume it using sorry.
+Based on this assumption, the converter automatically proves the timing function's termination.
+Therefore, the command uses the proof over dom presented in \autoref{chapter:termination}.
+We receive a warning in the output.
+\begin{lstlisting}[language=isabelle,mathescape=true,keepspaces]
+function collatz :: nat =>nat where
+  collatz n = (if n $\le$ 1 then 0 else
+               if even n then 1 + collatz (n div 2)
+               else 1 + collatz (3 * n + 1))
+  by auto
+termination sorry
+define_time_0 "(dvd)"
+define_time_fun collatz
+
+fun T_collatz :: nat =>nat where
+T_collatz n = 1 + (if n $\le$ 1 then 0 else
+                   if even n then T_collatz (n div 2)
+                   else T_collatz (3 * n + 1))
+\end{lstlisting}
+
+We now demonstrate how to use the $\texttt{define\_time\_function}$ command.
+After applying it, we can prove termination using the $\texttt{termination}$ command.
+
+\begin{lstlisting}[language=isabelle,mathescape=true]
+function sum :: nat => nat => nat where
+  sum i j = (if j $\le$ i then 0 else i + sum (Suc i) j)
+  by pat_completeness auto
+termination
+  by (relation measure ($\lambda$(i,j). j - i)) auto
+define_time_function sum
+termination
+  by (relation measure ($\lambda$(i,j). j - i)) auto
+
+fun T_sum :: nat => nat => nat where
+    T_sum i j = 1 + (if j $\le$ i then 0 else T_sum (Suc i) j)
+\end{lstlisting}

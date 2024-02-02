@@ -65,7 +65,7 @@ This optimization step could be dropped but keeps the timing function readable.
     \mathcal{T}\llbracket p\ a_{1}\ \dots\ a_{n}\rrbracket &= \mathcal{T}\llbracket a_{1}\rrbracket + \dots + \mathcal{T}\llbracket a_{n}\rrbracket\\
     \mathcal{T}\llbracket c \rrbracket &= 0\\
     \mathcal{T}\llbracket \text{IF}\ c\ \text{THEN}\ e_{1}\ \text{ELSE}\ e_{2}\rrbracket &= \mathcal{T}\llbracket c\rrbracket + \text{IF}\  c\ \text{THEN}\ \mathcal{V}\llbracket e_{1}\rrbracket\ \text{ELSE}\ \mathcal{T}\llbracket e_{2}\rrbracket\\
-    \mathcal{T}\llbracket\texttt{fun}\ e\ a_{1}\ \dots\ a_{n}\rrbracket &= \mathcal{T}\llbracket e\rrbracket + \mathcal{T}\llbracket e_{1}\rrbracket + \dots + \mathcal{T}\llbracket e_{n}\rrbracket + \texttt{cost}\ e\ e_{1}\ \dots\ e_{n}\\
+    \mathcal{T}\llbracket\texttt{fun}\ e\ a_{1}\ \dots\ a_{n}\rrbracket &= \mathcal{T}\llbracket e\rrbracket + \mathcal{T}\llbracket e_{1}\rrbracket + \dots + \mathcal{T}\llbracket e_{n}\rrbracket + \texttt{snd}\ e\ e_{1}\ \dots\ e_{n}\\
     \mathcal{T}\llbracket (f',cf)\rrbracket &= 0\\
     \mathcal{T}\llbracket (p,cp)\rrbracket &= 0
   \end{align*}

@@ -197,7 +197,7 @@ fun conv :: defs => defs where
                                            | Some e => Some (cost e))
 \end{lstlisting}
 
-For the final correctness theorem, we need a property that tells us whether a definition contains any timing function.
+For the final correctness theorem, we need a property that indicates whether a definition contains any timing function.
 This allows us to avoid dropping already referenced timing functions with the conv function.
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
 definition no_time $\phi$ $\equiv$ ($\forall$f. $\phi$ (cFun f) = None)

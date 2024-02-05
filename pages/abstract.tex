@@ -8,11 +8,11 @@ This manual step introduces errors and makes following proofs worthless.
 This work aims to implement an automatic converter for functions to their timing functions in Isabelle.
 
 In this work, we consider the number of function calls as a measurement of the running time of a function.
-We analyze Sands' and Nipkow's translation schemas for non-curried first-order functions.
-Sands provides an extension to support higher-order and curried functions.
+We analyze existing translation schemas for non-curried first-order functions.
+One provides an extension to support higher-order and curried functions.
 Implementing the schema for curried functions is not possible due to strict typing in Isabelle.
 Therefore, we restrict the converter's schema to non-curried higher-order functions.
-We formalize Sands' correctness proof for the translation schema for first-order functions.
+We formalize a correctness proof for the translation schema for first-order functions.
 
 The implemented converter simplifies the conversion of functions.
 It offers automatic translations through a single command and proves termination automatically.

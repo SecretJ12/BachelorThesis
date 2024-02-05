@@ -5,19 +5,20 @@ In order to argue about it, we first need to convert the functions into their ru
 They measure the running time of a function.
 Here, we use the number of function calls to do so.
 Afterward, we can use proof assistants such as Isabelle to proof a certain running time.
-In Isabelle, the user needs to do this conversion step manually.
-This can create errors and makes the following proof worthless.
+The user needs to do the conversion step manually in Isabelle.
+The manual step creates errors and makes the following proof worthless.
 This work aims to automate the conversion from functions to their running time functions in Isabelle.
 As we only consider the running time class relevant, we simplify the resulting function, leading to simpler proofs.
 To do so, we will drop all constants that are not needed.
-Additionally, we restrict the convertible functions to keep the converter readable and maintainable.
+Additionally, we restrict the converter to non-curried higher-order functions to keep the code readable and maintainable.
 
-Starting with \autoref{chapter:relwork}, we look at the conversion schema used in literature.
-We start with a schema for more restricted functions and relax the restrictions till we see a schema for curried higher-order functions.
+In \autoref{chapter:relwork}, we look at the translation schema used in literature.
+We start analyzing the Sands' \parencite{sands} and Nipkow's \parencite{fds} translation schema for non-curried first-order functions.
+Like Sands, we relax the restrictions until we see a schema for curried higher-order functions.
 To prove the correctness of the used schema, we will look at a proof for the conversion schema in \autoref{chapter:formal}.
 The proof was formalized in Isabelle.
 We present the implementation in \autoref{chapter:impl}.
-The chapter overviews the added commands and explains the termination proof used.
+The chapter overviews the added commands and explains the automatic termination proof.
 Afterward, we discuss the restrictions the converter currently has.
 
 The converter gets added to the Isabelle distribution.

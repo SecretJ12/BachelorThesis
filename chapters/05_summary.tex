@@ -14,22 +14,22 @@ Sands presented this proof for his schema, and we formalized it in Isabelle.
 The main part presents the automatic converter for functions into their running time function in Isabelle.
 We restricted the accepted functions to non-curried higher-order functions.
 This keeps the code readable and maintainable.
-Additionally, we restrict these functions' arguments.
-Their type may not be datatypes that contain other functions, as conversion is not obvious and quickly becomes laborious.
 The translation schema is based on the proposals by Sands \parencite{sands} and Nipkow \parencite{fds}.
-We can now use the command $\texttt{define\_time\_fun}$ to convert a function automatically.
+We can use the command $\texttt{define\_time\_fun}$ to convert a function automatically.
 It first tries to prove termination using the $\texttt{lexicographic\_order}$ tactic.
 If this fails, we use a more advanced tactic that uses the termination proof of the original function.
-This proof covers most functions.
+This proof tactic covers most functions.
 We can use the command $\texttt{define\_time\_function}$ to prove termination manually.
 
 Although the converter works automatically, we need to use it with care.
 Most basic mathematical operations and comparisons are marked as zero functions.
 Those zero functions will assumed as constant and get translated to $0$.
-The constant time may not hold in certain situations as equality on lists.
+The constant time may not hold in certain situations as the equality operator on lists.
 We would need to extend the datatype command to create a timing function for every overload.
-Also, curried functions are not allowed.
+Also, curried functions are disallowed.
 Sands proposed a schema to tackle these, but it does not work in Isabelle due to the strict type system.
 We would need to consider adapting this schema to overcome this limitation.
+Additionally, we restrict these functions' arguments.
+Their type may not be datatypes that contain other functions, as conversion is not obvious and quickly becomes laborious.
 
-The converter was added to the Isabelle distribution and will be accessible in Isabelle2024.
+The converter is part of the current Isabelle development version and will be part of the next major Isabelle version.

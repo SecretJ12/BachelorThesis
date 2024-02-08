@@ -82,7 +82,7 @@ In case the arity is $1$, we can replace this by the application to the cost fun
 For the normal application $\texttt{app'}$, he applies the same but evaluates the normal function instead of the cost function.
 As a result, we gain a timing function similar to our previous schema.
 The apply function will only be used for passed functions now.
-\begin{lstlisting}[language=isabelle,mathescape=true]
+\begin{lstlisting}[language=isabelle,mathescape=true,caption=Optimized translation for map function]
 function T_map where
   T_map f [] = 1
 | T_map f (x#xs) = 1 + f c@ x + T_map f xs

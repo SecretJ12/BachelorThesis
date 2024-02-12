@@ -6,8 +6,9 @@ We use the schema by Nipkow \parencite{fds} for first-order functions as he prov
 All cases defined by Sands also equal this schema \parencite{sands} as they are equal to Nipkow's translation.
 Therefore, the proof described in \autoref{chapter:formal} holds for first-order function translated by this schema.
 In order to support higher-order functions, we extend the schema as described in \autoref{chapter:higher_order}.
-Every argument being a function will be replaced by a pair of the function and its timing function.
-We disallow datatypes containing functions as parameters, see \autoref{chapter:restrictions}.
+Every argument that is a function will be replaced by a pair of the function and its timing function.
+We disallow datatypes containing functions as parameters.
+Refer to \autoref{chapter:restrictions} for more details.
 
 Just like Nipkow and Sands, we treat some functions differently.
 Here, those functions are called zero functions.
@@ -46,7 +47,7 @@ Some optimizations are made to keep the translated functions simple in the same 
 The $\texttt{if-else}$ and the $\texttt{case}$ expression are left out if all of their cases are empty.
 Only the condition respectively the evaluated expression will be converted.
 In the translation of the let expression, cases exist where the assigned variable is no longer used in the translated body.
-Then, we reduce the translation to this body.
+In this case, we reduce the translation to this body.
 
 \begin{figure}
 \begin{align*}
@@ -81,7 +82,8 @@ In Sands' schema this step happens identically in the function described in \aut
 
 % A A A A A A A A A A A A A A A A A A A A A A
 For first-order functions, the arguments for functions need to be passed unchanged.
-As we get functions as pairs for higher-order functions, we must prepare the arguments before passing them.
+We convert function arguments to pairs for higher-order functions.
+Therefore, we must prepare the arguments before passing them.
 Function $\mathcal{A}$ does this preparation.
 All defined constants of non-primitive functions will be converted into the wanted pair.
 For primitive functions, the second argument will be a lambda, taking the same number of arguments and returning $0$.

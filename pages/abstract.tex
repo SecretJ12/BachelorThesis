@@ -4,10 +4,10 @@ Analyzing a function's running time is crucial in the analysis of algorithms.
 Timing functions are an essential step to measure the exact running time of a function.
 With their help, we can proof a certain running time class.
 In the proof assistant Isabelle, the conversion step of a function to their running time equivalent is done manually.
-This manual step introduces errors and makes following proofs worthless.
+The manual step introduces errors and makes following proofs worthless.
 This work aims to implement an automatic converter for functions to their timing functions in Isabelle.
 
-In this work, we consider the number of function calls as a measurement of the running time of a function.
+Here, we consider the number of function calls as a measurement of the running time of a function.
 We analyze existing translation schemas for non-curried first-order functions.
 One provides an extension to support higher-order and curried functions.
 Implementing the schema for curried functions is not possible due to strict typing in Isabelle.

@@ -8,7 +8,7 @@ We presented a translation schema for non-curried first-order functions.
 Afterward, we extended this schema for higher-order functions.
 To deal with the functions as arguments, we extended them to pairs containing the function and the timing function.
 To support curried functions, we extended this pair by a counter for the number of arguments left.
-The next part looked at a correctness proof for the first-order functions schema.
+The next chapter provided a correctness proof for the first-order functions schema.
 Sands presented this proof for his schema, and we formalized it in Isabelle.
 
 The main part presents the automatic converter for functions into their running time function in Isabelle.
@@ -26,7 +26,7 @@ Most basic mathematical operations and comparisons are marked as zero functions.
 Those zero functions will assumed as constant and get translated to $0$.
 The constant time may not hold in certain situations as the equality operator on lists.
 We would need to extend the datatype command to create a timing function for every overload.
-Also, curried functions are disallowed.
+Moreover, curried functions are disallowed.
 Sands proposed a schema to tackle these, but it does not work in Isabelle due to the strict type system.
 We would need to consider adapting this schema to overcome this limitation.
 Additionally, we restrict these functions' arguments.

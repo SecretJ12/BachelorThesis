@@ -3,7 +3,7 @@
 \section{Termination proof} \label{chapter:termination}
 
 The command $\texttt{define\_time\_fun}$ tries to automatically prove termination of the timing function.
-Therefore, it uses two different tactics.
+It does this by using two different tactics.
 The first try equals the command $\texttt{fun}$ as the command name suggests.
 Both use the tactic $\texttt{lexicographic\_order}$ in order to prove termination.
 We now look at the following function $\texttt{sum}$, where this tactic fails.

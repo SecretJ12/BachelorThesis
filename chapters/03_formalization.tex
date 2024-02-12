@@ -205,10 +205,9 @@ definition no_time $\phi$ $\equiv$ ($\forall$f. $\phi$ (cFun f) = None)
 
 In order to better deal with this property, we define another auxiliary lemma.
 It states that if there is no timing function, then the evaluation result does not change when the expression is converted using $\texttt{conv}$.
-The lemma is proved over induction with a helping lemma claiming conv does not change defined functions.
+The lemma is proved over induction with a helping lemma claiming conv does not change defined functions:
 \begin{lstlisting}[language=isabelle,mathescape=true,escapeinside={@}{@}]
-lemma no_time_trans:
-  no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e
+lemma no_time_trans: no_time $\phi$ ==> $\phi$ f = Some e ==> (conv $\phi$) f = Some e
   by (cases f) (auto simp: no_time_def)
 lemma eval_no_time_trans:
   $\rho$, $\phi$ |- e -> v ==> no_time $\phi$ ==> $\rho$, (conv $\phi$) |- e -> v

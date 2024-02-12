@@ -11,7 +11,6 @@ Only the converted condition is left.
 fun bool_to_nat :: bool => nat where
   bool_to_nat b = (if dummy b then 1 else 0)
 define_time_fun bool_to_nat
-
 fun T_bool_to_nat :: bool => nat where
   T_bool_to_nat b = T_dummy b
 \end{lstlisting}
@@ -21,7 +20,6 @@ The same happens if we define the same function with a case construct.
 fun bool_to_nat_case :: bool => nat where
   bool_to_nat_case b = (case dummy b of True => 1 | False => 0)
 define_time_fun bool_to_nat_case
-
 fun T_bool_to_nat_case :: bool => nat where
     T_bool_to_nat_case b = T_dummy b
 \end{lstlisting}
@@ -34,7 +32,6 @@ The outer $\texttt{let}$ is converted as expected.
 fun let_add :: int => int => int where
   let_add x y = (let b = dummy y; a = dummy x in a + dummy b)
 define_time_fun let_add
-
 fun T_let_add :: int => int => nat where
   T_let_add x y = T_dummy y + (let b = dummy y in T_dummy x + T_dummy b)
 \end{lstlisting}
@@ -49,7 +46,6 @@ fun even :: nat => bool
 | even (Suc n) = odd n
 | odd (Suc n) = even n
 define_time_fun even odd
-
 fun T_even_T_odd :: nat => nat where
   T_even 0 = 1
 | T_odd 0 = 1
@@ -72,7 +68,6 @@ function collatz :: nat =>nat where
 termination sorry
 define_time_0 "(dvd)"
 define_time_fun collatz
-
 fun T_collatz :: nat =>nat where
 T_collatz n = 1 + (if n $\le$ 1 then 0 else
                    if even n then T_collatz (n div 2)
@@ -91,7 +86,6 @@ termination
 define_time_function sum
 termination
   by (relation measure ($\lambda$(i,j). j - i)) auto
-
 fun T_sum :: nat => nat => nat where
     T_sum i j = 1 + (if j $\le$ i then 0 else T_sum (Suc i) j)
 \end{lstlisting}

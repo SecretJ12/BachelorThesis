@@ -7,6 +7,8 @@ First, we look at the function $\texttt{test}$ in \autoref{lst:ho_test}.
   fun test :: (nat => bool) => nat => nat where
     test f a = (if f a then 1 else 0)
 \end{lstlisting}
+
+\pagebreak
 Applying the translation $\mathcal{T}$ for first-order functions onto the expression yields us
 \begin{lstlisting}[language=isabelle,mathescape=true]
   T_f a + (if f a then 0 else 0).

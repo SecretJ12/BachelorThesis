@@ -136,9 +136,9 @@ The translation is as follows.
   $\equiv$ T_map f [] = 1 + $\mathcal{T}\llbracket$[]$\rrbracket$
   $\equiv$ T_map f [] = 1
 
-  $\mathcal{C}\llbracket$map f (x#xs) = Cons (f x) (map f x)$\rrbracket$
-  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{T}\llbracket$Cons (f x) (map f x)$\rrbracket$
-  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$Cons (f x) (map f x)$\rrbracket$ + $\mathcal{T}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$map f xs$\rrbracket$
+  $\mathcal{C}\llbracket$map f (x#xs) = Cons (f x) (map f xs)$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{T}\llbracket$Cons (f x) (map f xs)$\rrbracket$
+  $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$Cons (f x) (map f xs)$\rrbracket$ + $\mathcal{T}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$map f xs$\rrbracket$
   $\equiv$ T_map f (x#xs) = 1 + $\mathcal{T}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$map f xs$\rrbracket$
   $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$f x$\rrbracket$ + $\mathcal{T}\llbracket$x$\rrbracket$ + $\mathcal{F}\llbracket$map f xs$\rrbracket$ + $\mathcal{T}\llbracket$f$\rrbracket$ + $\mathcal{T}\llbracket$xs$\rrbracket$
   $\equiv$ T_map f (x#xs) = 1 + $\mathcal{F}\llbracket$f x$\rrbracket$ + $\mathcal{F}\llbracket$map f xs$\rrbracket$

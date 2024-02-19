@@ -32,7 +32,7 @@ Sands also provides a proof for this schema.
     \mathcal{T}\llbracket f\ a_{1}\ \dots\ a_{n}\rrbracket &= (T\_f\ a_{1}\ \dots\ a_{n} + \mathcal{T}\llbracket a_{1}\rrbracket +\ \dots\ + \mathcal{T}\llbracket a_{n}\rrbracket)\\
     \mathcal{T}\llbracket p\ a_{1}\ \dots\ a_{n}\rrbracket &= (\mathcal{T}\llbracket a_{1}\rrbracket +\ \dots\ + \mathcal{T}\llbracket a_{n}\rrbracket)\\
     \mathcal{T}\llbracket c\rrbracket &= 0\\
-    \mathcal{T}\llbracket \texttt{IF}\ c\ \texttt{THEN}\ e_{1}\ \texttt{ELSE}\ e_{2}\rrbracket &= (f\ a_{1}\ \dots\ a_{n} = 1 + \mathcal{T}\llbracket e\rrbracket)
+    \mathcal{T}\llbracket \texttt{IF}\ c\ \texttt{THEN}\ e_{1}\ \texttt{ELSE}\ e_{2}\rrbracket &= \mathcal{T}\llbracket c\rrbracket + (\texttt{IF}\ c\ \texttt{THEN}\ \mathcal{T}\llbracket e_{1}\rrbracket\ \texttt{ELSE}\ \mathcal{T}\llbracket e_{2}\rrbracket)
   \end{align*}
   \caption{Translation function $\mathcal{T}$ for expressions of first-order functions}
   \label{fig:first_order_T}
